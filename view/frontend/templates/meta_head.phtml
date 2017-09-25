@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+
+/**
+ * @category   Magenerds
+ * @package    Magenerds_RichSnippet
+ * @subpackage view
+ * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
+ * @link       http://www.techdivision.com/
+ * @author     Belinda Tschampel <b.tschampel@techdivision.com>
+ */
+
+/** @var $block \Magenerds\RichSnippet\Block\Schemaorg */
+
+/* @var \Magento\Catalog\Model\Product $product */
+$product = $this->getProduct();
+$reviews = $this->getReviews();
+$color = $this->getColor();
+$logoUrl = $this->getLogo();
+$description = $this->getDescription();
+$sku = $this->getSku();
+$productId = $this->getProductId();
+$brand = $this->getBrand();
+
+/* @var \Magento\Review\Model\Review\Summary $summaryModel */
+$summaryModel = $this->getReviewSummary();
+$reviewCount = $summaryModel->getReviewsCount();
+if (!$reviewCount) {
+    $reviewCount = 0;
+}
+$ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
+?>
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "<?php /* @escapeNotVerified */ echo $block->escapeQuote($block->stripTags($product->getName())); ?>",
+<?php if (strlen(trim($color))): ?>
+        "color": "<?php /* @escapeNotVerified */ echo $block->stripTags($color); ?>",
+<?php endif; ?>
+<?php if (strlen(trim($logoUrl))): ?>
+        "logo": "<?php /* @escapeNotVerified */ echo $logoUrl; ?>",
+<?php endif; ?>
+<?php if (strlen(trim($description))): ?>
+        "description": "<?php echo /* @escapeNotVerified */  $block->escapeQuote($block->stripTags($description)); ?>",
+<?php endif; ?>
+        "sku": "<?php /* @escapeNotVerified */ echo $sku; ?>",
+<?php if (strlen(trim($productId ))): ?>
+        "productID": "<?php /* @escapeNotVerified */ echo __('Art.nr.:') . $block->stripTags($productId); ?>",
+<?php endif; ?>
+<?php if (strlen(trim($brand))): ?>
+        "brand": {
+            "@type": "Thing",
+            "name": "<?php /* @escapeNotVerified */ echo $block->stripTags($brand); ?>"
+        },
+<?php endif; ?>
+<?php if($reviewCount > 0): ?>
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "bestRating": 5,
+            "worstRating": 1,
+            "ratingValue": "<?php echo $ratingSummary / 20 ; ?>",
+            "reviewCount": "<?php echo $reviewCount ?>"
+        },
+<?php endif; ?>
+        "offers": {
+            "@type": "Offer",
+            "priceCurrency": "<?php echo $block->getCurrencyCode(); ?>",
+<?php if ($product->isAvailable()): ?>
+            "availability": "https://schema.org/InStock",
+<?php else : ?>
+            "availability": "https://schema.org/OutOfStock",
+<?php endif; ?>
+            "price": "<?php echo $product->getFinalPrice(); ?>"
+        }
+    }
+</script>

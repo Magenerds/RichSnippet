@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+/**
+ * @category   Magenerds
+ * @package    Magenerds_RichSnippet
+ * @subpackage etc
+ * @author     Belinda Tschampel <b.tschampel@techdivision.com>
+ * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
+ * @link       http://www.techdivision.com/
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="Magenerds" translate="label" sortOrder="1000">
+            <label>Magenerds</label>
+        </tab>
+        <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
+                 showInStore="1">
+            <label>RichSnippet</label>
+            <tab>Magenerds</tab>
+            <resource>Magenerds_RichSnippet::config_richsnippet</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>General</label>
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="logo" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Transfer Shop Logo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="product_properties" translate="label" type="text" sortOrder="20" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <label>Product Information Properties</label>
+                <field id="color" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Attribute for Color Property</label>
+                    <comment>Only attributes which are used in product listing are shown</comment>
+                    <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
+                </field>
+                <field id="description" translate="label" type="select" sortOrder="20" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Content for Description Property</label>
+                    <source_model>Magenerds\RichSnippet\Model\Config\Source\Description</source_model>
+                </field>
+                <field id="sku" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Attribute for SKU Property</label>
+                    <comment>Only attributes which are used in product listing are shown</comment>
+                    <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
+                </field>
+                <field id="product_id" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Attribute for ProductID Property</label>
+                    <comment>Only attributes which are used in product listing are shown</comment>
+                    <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
+                </field>
+                <field id="brand" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Attribute for Brand Property</label>
+                    <comment>Only attributes which are used in product listing are shown</comment>
+                    <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
