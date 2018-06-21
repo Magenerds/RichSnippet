@@ -1,0 +1,35 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+
+/**
+ * @category   Magenerds
+ * @package    Magenerds_RichSnippet
+ * @subpackage view
+ * @copyright  Copyright (c) 2018 TechDivision GmbH (http://www.techdivision.com)
+ * @link       http://www.techdivision.com/
+ * @author     Julia Mehringer <j.mehringer@techdivision.com>
+ */
+
+/** @var $block \Magenerds\RichSnippet\Block\Facebookopengraph */
+
+$fbAppId = $block->getFacebookAppId();
+?>
+<!--  facebook open graph -->
+<?php if ($fbAppId) : ?>
+    <meta property="fb:app_id" content="<?php echo $fbAppId; ?>" />
+<?php endif; ?>
+
+<?php $ogData = $block->getOpenGraphData(); ?>
+
+<?php foreach($ogData as $key => $value): ?>
+    <?php if(isset($key)): ?>
+        <meta property="og:<?php echo $key ?>" content="<?php echo $value ?>">
+    <?php endif; ?>
+<?php endforeach; ?>
+<!--  facebook open graph -->
