@@ -90,6 +90,17 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Load facebook_app_id config value
+     *
+     * @param int $storeId
+     * @return string
+     */
+    public function getFacebookAppIdConfig($storeId = 0)
+    {
+        return $this->scopeConfig->getValue('richsnippet/open_graph/facebook_app_id', $storeId);
+    }
+
+    /**
      * Returns system configuration
      *
      * @param $storeId int store id

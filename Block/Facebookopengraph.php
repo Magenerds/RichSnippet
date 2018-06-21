@@ -9,8 +9,10 @@
 
 namespace Magenerds\RichSnippet\Block;
 
+use Magento\Catalog\Block\Product\Image;
 use Magento\Catalog\Block\Product\ImageBuilder;
 use Magento\Catalog\Model\Category;
+use Magento\Cms\Model\Page;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
@@ -112,7 +114,7 @@ class Facebookopengraph extends Template
      * @param string $imageId
      * @param array $attributes
      *
-     * @return \Magento\Catalog\Block\Product\Image
+     * @return Image
      */
     private function getImage($product, $imageId, $attributes = [])
     {
@@ -169,7 +171,7 @@ class Facebookopengraph extends Template
      */
     private function getCategoryImage()
     {
-        return $this->directoryList->getPath(DirectoryList::MEDIA) . DIRECTORY_SEPARATOR . 'catalog/category' . DIRECTORY_SEPARATOR . $this->getCategory()->getImage();
+        return $this->directoryList->getPath(DirectoryList::MEDIA) . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'category' . DIRECTORY_SEPARATOR . $this->getCategory()->getImage();
     }
 
     /**
@@ -185,7 +187,7 @@ class Facebookopengraph extends Template
     /**
      * Returns CMS page
      *
-     * @return \Magento\Cms\Model\Page
+     * @return Page
      */
     private function getCmsPage()
     {

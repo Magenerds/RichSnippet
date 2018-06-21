@@ -83,6 +83,13 @@
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
             </group>
+            <group id="open_graph" translate="label" type="text" sortOrder="20" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <field id="facebook_app_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Facebook App ID</label>
+                </field>
+            </group>
         </section>
     </system>
 </config>
