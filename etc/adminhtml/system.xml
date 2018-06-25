@@ -40,15 +40,6 @@
                     <label>Transfer Shop Logo</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="facebook_enable" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
-                    <label>Enable Facebook OpenGraph</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="facebook_app_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
-                    <label>Facebook App ID</label>
-                </field>
             </group>
             <group id="product_properties" translate="label" type="text" sortOrder="20" showInDefault="1"
                    showInWebsite="1" showInStore="1">
@@ -85,6 +76,12 @@
             </group>
             <group id="open_graph" translate="label" type="text" sortOrder="20" showInDefault="1"
                    showInWebsite="1" showInStore="1">
+                <label>Facebook Open Graph</label>
+                <field id="facebook_enable" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Enable Facebook OpenGraph</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="facebook_app_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Facebook App ID</label>

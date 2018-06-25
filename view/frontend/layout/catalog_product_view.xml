@@ -20,7 +20,7 @@
     <body>
         <referenceBlock name="head.additional">
             <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\Schemaorg" name="magenerds.schemaorg" template="Magenerds_RichSnippet::meta_head.phtml" />
-            <block ifconfig="richsnippet/general/facebook_enable" class="Magenerds\RichSnippet\Block\Facebookopengraph" name="magenerds.facebookopengraph" template="Magenerds_RichSnippet::facebookopengraph_head.phtml" />
+            <block ifconfig="richsnippet/open_graph/facebook_enable" class="Magenerds\RichSnippet\Block\Facebookopengraph" name="magenerds.facebookopengraph" template="Magenerds_RichSnippet::facebookopengraph_head.phtml" />
         </referenceBlock>
     </body>
 </page>
