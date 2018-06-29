@@ -97,7 +97,7 @@ class Data extends AbstractHelper
      */
     public function getFacebookAppIdConfig($storeId = 0)
     {
-        return $this->scopeConfig->getValue('richsnippet/open_graph/facebook_app_id', $storeId);
+        return $this->scopeConfig->getValue('richsnippet/open_graph/facebook_app_id', ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
