@@ -202,21 +202,21 @@ class Facebookopengraph extends Template
     }
 
     /**
-     * Returns the title of the page
+     * Returns the title of the CMS page
      *
      * @return string
      */
-    private function getPageTitle()
+    private function getCmsPageTitle()
     {
-        $title = $this->getLayout()->getBlock('page.main.title');
+        $title = $this->getCmsPage()->getTitle();
         if($title) {
-            return $title->getPageTitle();
+            return $title;
         }
         return '';
     }
 
     /**
-     * Returns the cms meta description
+     * Returns the CMS Page meta description
      *
      * @return string
      */
@@ -282,7 +282,7 @@ class Facebookopengraph extends Template
 
         if($this->getRequest()->getFullActionName() === 'cms_page_view') {
             $ogData['type'] = 'article';
-            $ogData['title'] = $this->escapeHtml($this->getPageTitle());
+            $ogData['title'] = $this->escapeHtml($this->getCmsPageTitle());
             $ogData['description'] = $this->getCmsDescription();
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
         }
