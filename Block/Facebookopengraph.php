@@ -155,8 +155,9 @@ class Facebookopengraph extends Template
      */
     private function getCategoryDescription()
     {
-        if($this->getCategory()->getData('meta_description')) {
-            return $this->getCategory()->getData('meta_description');
+        $description = $this->getCategory()->getData('meta_description');
+        if($description) {
+            return $description;
         }
         return '';
     }
