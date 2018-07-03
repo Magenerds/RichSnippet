@@ -135,13 +135,17 @@ class Facebookopengraph extends Template
     }
 
     /**
-     * Returns the title of the page
+     * Returns the title of the category
      *
      * @return string
      */
-    private function getPageTitle()
+    private function getCategoryTitle()
     {
-        return $this->getLayout()->getBlock('page.main.title')->getPageTitle();
+        $title = $this->getCategory()->getData('meta_title');
+        if($title) {
+            return $title;
+        }
+        return '';
     }
 
     /**
@@ -151,7 +155,10 @@ class Facebookopengraph extends Template
      */
     private function getCategoryDescription()
     {
-        return $this->getCategory()->getData('meta_description');
+        if($this->getCategory()->getData('meta_description')) {
+            return $this->getCategory()->getData('meta_description');
+        }
+        return '';
     }
 
     /**
@@ -195,13 +202,31 @@ class Facebookopengraph extends Template
     }
 
     /**
+     * Returns the title of the page
+     *
+     * @return string
+     */
+    private function getPageTitle()
+    {
+        $title = $this->getLayout()->getBlock('page.main.title');
+        if($title) {
+            return $title->getPageTitle();
+        }
+        return '';
+    }
+
+    /**
      * Returns the cms meta description
      *
      * @return string
      */
     private function getCmsDescription()
     {
-        return $this->getCmsPage()->getData('meta_description');
+        $page = $this->getCmsPage();
+        if($page && $page->getData('meta_description')) {
+            return $page->getData('meta_description');
+        }
+        return '';
     }
 
     /**
@@ -241,7 +266,7 @@ class Facebookopengraph extends Template
             $categoryImageSize = $this->getCategoryImageSize();
 
             $ogData['type'] = 'product.group';
-            $ogData['title'] = $this->escapeHtml($this->getPageTitle());
+            $ogData['title'] = $this->escapeHtml($this->getCategoryTitle());
             $ogData['description'] = $this->escapeHtml($this->getCategoryDescription());
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
             if($categoryImage) {
