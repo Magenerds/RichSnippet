@@ -135,13 +135,17 @@ class Facebookopengraph extends Template
     }
 
     /**
-     * Returns the title of the page
+     * Returns the title of the category
      *
      * @return string
      */
-    private function getPageTitle()
+    private function getCategoryTitle()
     {
-        return $this->getLayout()->getBlock('page.main.title')->getPageTitle();
+        $title = $this->getCategory()->getData('meta_title');
+        if($title) {
+            return $title;
+        }
+        return '';
     }
 
     /**
@@ -151,7 +155,11 @@ class Facebookopengraph extends Template
      */
     private function getCategoryDescription()
     {
-        return $this->getCategory()->getData('meta_description');
+        $description = $this->getCategory()->getData('meta_description');
+        if($description) {
+            return $description;
+        }
+        return '';
     }
 
     /**
@@ -195,13 +203,31 @@ class Facebookopengraph extends Template
     }
 
     /**
-     * Returns the cms meta description
+     * Returns the title of the CMS page
+     *
+     * @return string
+     */
+    private function getCmsPageTitle()
+    {
+        $title = $this->getCmsPage()->getTitle();
+        if($title) {
+            return $title;
+        }
+        return '';
+    }
+
+    /**
+     * Returns the CMS Page meta description
      *
      * @return string
      */
     private function getCmsDescription()
     {
-        return $this->getCmsPage()->getData('meta_description');
+        $page = $this->getCmsPage();
+        if($page && $page->getData('meta_description')) {
+            return $page->getData('meta_description');
+        }
+        return '';
     }
 
     /**
@@ -241,7 +267,7 @@ class Facebookopengraph extends Template
             $categoryImageSize = $this->getCategoryImageSize();
 
             $ogData['type'] = 'product.group';
-            $ogData['title'] = $this->escapeHtml($this->getPageTitle());
+            $ogData['title'] = $this->escapeHtml($this->getCategoryTitle());
             $ogData['description'] = $this->escapeHtml($this->getCategoryDescription());
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
             if($categoryImage) {
@@ -257,7 +283,7 @@ class Facebookopengraph extends Template
 
         if($this->getRequest()->getFullActionName() === 'cms_page_view') {
             $ogData['type'] = 'article';
-            $ogData['title'] = $this->escapeHtml($this->getPageTitle());
+            $ogData['title'] = $this->escapeHtml($this->getCmsPageTitle());
             $ogData['description'] = $this->getCmsDescription();
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
         }
