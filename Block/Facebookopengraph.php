@@ -189,7 +189,12 @@ class Facebookopengraph extends Template
      */
     private function getCategoryImageSize()
     {
-        return getimagesize($this->getCategoryImage());
+        $image = $this->getCategoryImage();
+
+        if(file_exists($image)) {
+            return getimagesize($this->getCategoryImage());
+        }
+        return false;
     }
 
     /**
