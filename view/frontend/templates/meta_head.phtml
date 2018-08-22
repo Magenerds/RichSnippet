@@ -43,20 +43,20 @@ $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingS
         "@context": "https://schema.org/",
         "@type": "Product",
         "name": "<?php /* @escapeNotVerified */ echo $block->escapeQuote($block->stripTags($product->getName())); ?>",
-<?php if (strlen(trim($color))): ?>
+<?php if ($block->valueIsSet($color)): ?>
         "color": "<?php /* @escapeNotVerified */ echo $block->stripTags($color); ?>",
 <?php endif; ?>
-<?php if (strlen(trim($logoUrl))): ?>
+<?php if ($block->valueIsSet($logoUrl)): ?>
         "logo": "<?php /* @escapeNotVerified */ echo $logoUrl; ?>",
 <?php endif; ?>
-<?php if (strlen(trim($description))): ?>
+<?php if ($block->valueIsSet($description)): ?>
         "description": "<?php echo /* @escapeNotVerified */  $block->escapeQuote($block->stripTags($description)); ?>",
 <?php endif; ?>
         "sku": "<?php /* @escapeNotVerified */ echo $sku; ?>",
-<?php if (strlen(trim($productId ))): ?>
+<?php if ($block->valueIsSet($productId)): ?>
         "productID": "<?php /* @escapeNotVerified */ echo __('Art.nr.:') . $block->stripTags($productId); ?>",
 <?php endif; ?>
-<?php if (strlen(trim($brand))): ?>
+<?php if ($block->valueIsSet($brand)): ?>
         "brand": {
             "@type": "Thing",
             "name": "<?php /* @escapeNotVerified */ echo $block->stripTags($brand); ?>"
