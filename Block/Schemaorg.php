@@ -76,6 +76,17 @@ class Schemaorg extends Template
     }
 
     /**
+     * Check if a value is a string and not empty.
+     *
+     * @param $value
+     * @return bool
+     */
+    public function valueIsSet($value)
+    {
+        return is_string($value) && strlen(trim($value));
+    }
+
+    /**
      * Retrieve current product model
      *
      * @return Product
