@@ -191,8 +191,8 @@ class Facebookopengraph extends Template
     {
         $image = $this->getCategoryImage();
 
-        if(file_exists($image)) {
-            return getimagesize($this->getCategoryImage());
+        if(is_file($image)) {
+            return getimagesize($image);
         }
         return false;
     }
