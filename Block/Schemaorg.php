@@ -9,14 +9,16 @@
 
 namespace Magenerds\RichSnippet\Block;
 
-use Magento\Framework\View\Element\Template;
-use Magento\Framework\Registry;
-use Magento\Review\Model\Review\SummaryFactory;
-use Magento\Framework\View\Element\Template\Context;
 use Magenerds\RichSnippet\Helper\Data;
-use Magento\Theme\Block\Html\Header\Logo;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\DataObject;
+use Magento\Framework\Event\Manager as EventManager;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
 use Magento\Review\Model\Review\Summary;
+use Magento\Review\Model\Review\SummaryFactory;
+use Magento\Theme\Block\Html\Header\Logo;
 
 /**
  * Class Schemaorg
@@ -49,14 +51,18 @@ class Schemaorg extends Template
      * @var Logo
      */
     protected $logo;
+    /** @var EventManager */
+    private $eventManager;
 
     /**
      * Schemaorg constructor.
+     *
      * @param Registry $registry
      * @param SummaryFactory $reviewSummaryFactory
      * @param Data $helper
      * @param Logo $logo
      * @param Context $context
+     * @param EventManager $eventManager
      * @param array $data
      */
     public function __construct(
@@ -65,13 +71,14 @@ class Schemaorg extends Template
         Data $helper,
         Logo $logo,
         Context $context,
+        EventManager $eventManager,
         $data = []
-    )
-    {
+    ) {
         $this->coreRegistry = $registry;
         $this->reviewSummaryFactory = $reviewSummaryFactory;
         $this->helper = $helper;
         $this->logo = $logo;
+        $this->eventManager = $eventManager;
         parent::__construct($context, $data);
     }
 
@@ -196,6 +203,129 @@ class Schemaorg extends Template
     }
 
     /**
+     * @return array
+     */
+    public function getOrganizationSchema()
+    {
+        $organization = [];
+        $address = [];
+        $brand = [];
+
+        $address = $this->getOrganizationSchemaData($address, 'company_street', 'streetAddress');
+        $address = $this->getOrganizationSchemaData($address, 'company_postalcode', 'postalCode');
+        $address = $this->getOrganizationSchemaData($address, 'company_location', 'addressLocality');
+        if (!empty($address)) {
+            $address['@type'] = 'PostalAddress';
+            $organization['address'] = $address;
+        }
+
+        $brand = $this->getOrganizationSchemaData($brand, 'company_brand', 'name');
+        if (!empty($brand)) {
+            $brand['@type'] = 'Thing';
+            $organization['brand'] = $brand;
+        }
+
+        $organization = $this->getOrganizationSchemaData($organization, 'company_name', 'name');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_email', 'email');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_fax', 'faxNumber');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_phone', 'telephone');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_founding_date', 'foundingDate');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_url', 'url');
+        $organization = $this->getOrganizationSchemaData($organization, 'company_logo', 'logo');
+
+        if (!empty($organization)) {
+            $organization['@context'] = 'https://schema.org/';
+            $organization['@type'] = 'Organization';
+        }
+
+        $organizationData = new DataObject($organization);
+        $this->eventManager->dispatch('organization_schema_add_as_last', ['organizationSchema' => $organizationData]);
+        $organization = $organizationData->convertToArray();
+
+        return $organization;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductSchema()
+    {
+        $productModel = $this->getProduct();
+        $product = [];
+        $aggregateRating = [];
+        $offers = [];
+        $brand = [];
+
+        $summaryModel = $this->getReviewSummary();
+        $reviewCount = $summaryModel->getReviewsCount();
+        $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
+
+        if ($reviewCount > 0) {
+            $aggregateRating = $this->getProductSchemaData($aggregateRating, 5, 'bestRating');
+            $aggregateRating = $this->getProductSchemaData($aggregateRating, 1, 'worstRating');
+            $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
+            $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
+            if (!empty($aggregateRating)) {
+                $aggregateRating['@type'] = 'AggregateRating';
+                $product['aggregateRating'] = $aggregateRating;
+            }
+        }
+
+        $offers['@type'] = 'Offer';
+        $offers = $this->getProductSchemaData($offers, $this->getCurrencyCode(), 'priceCurrency');
+        $offers = $this->getProductSchemaData($offers, $productModel->isAvailable() ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", 'availability');
+        $offers = $this->getProductSchemaData($offers, $productModel->getFinalPrice(), 'price');
+        $product['offers'] = $offers;
+
+        $brand = $this->getProductSchemaData($brand, $this->getBrand(), 'name');
+        if (!empty($brand)) {
+            $brand['@type'] = 'Thing';
+            $product['brand'] = $brand;
+        }
+
+        $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($productModel->getName())), 'name');
+        $product = $this->getProductSchemaData($product, $this->stripTags($this->getColor()), 'color');
+        $product = $this->getProductSchemaData($product, $this->getLogo(), 'logo');
+        $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($this->getDescription())), 'description');
+        $product = $this->getProductSchemaData($product, $this->getSku(), 'sku');
+        $product = $this->getProductSchemaData($product, ($this->getProductId() ? __('Art.nr.:') . $this->stripTags($this->getProductId()) : ''), 'productID');
+        $product = $this->getProductSchemaData($product, $productModel->getUrlModel()->getUrl($productModel), 'url');
+        $product = $this->getProductSchemaData($product, $productModel->getMediaGalleryImages()->getFirstItem()->getUrl(), 'image');
+
+        if (!empty($product)) {
+            $product['@context'] = 'https://schema.org/';
+            $product['@type'] = 'Product';
+        }
+
+        $productData = new DataObject($product);
+        $this->eventManager->dispatch('product_schema_add_as_last', ['productSchema' => $productData, 'productModel' => $productModel]);
+        $product = $productData->convertToArray();
+
+        return $product;
+    }
+
+    protected function getOrganizationSchemaData(array $data, $name, $key)
+    {
+        $value = $this->helper->getDynamicConfigValue($name, 'organization_properties');
+        if ($this->valueIsSet($value)) {
+            $data[$key] = $value;
+        }
+        return $data;
+    }
+
+    protected function getProductSchemaData(array $data, $value, $key)
+    {
+        if (is_string($value)) {
+            if ($this->valueIsSet($value)) {
+                $data[$key] = $value;
+            }
+        } elseif ($value !== null) {
+            $data[$key] = $value;
+        }
+        return $data;
+    }
+
+    /**
      * Returns the attribute value for the given attribute code
      *
      * @param $code
@@ -207,7 +337,9 @@ class Schemaorg extends Template
 
         $attribute = $this->getProduct()->getResource()->getAttribute($code);
 
-        if (!$attribute) return $attributeValue;
+        if (!$attribute) {
+            return $attributeValue;
+        }
 
         if (in_array($attribute->getFrontendInput(), ['select', 'multiselect'])) {
             $attributeValue = $this->getProduct()->getAttributeText($code);

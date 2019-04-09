@@ -19,13 +19,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="Magenerds" translate="label" sortOrder="1000">
+        <tab id="magenerds" translate="label" sortOrder="1000">
             <label>Magenerds</label>
         </tab>
         <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                  showInStore="1">
             <label>RichSnippet</label>
-            <tab>Magenerds</tab>
+            <tab>magenerds</tab>
             <resource>Magenerds_RichSnippet::config_richsnippet</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="1">
@@ -74,7 +74,44 @@
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
             </group>
-            <group id="open_graph" translate="label" type="text" sortOrder="20" showInDefault="1"
+            <group id="organization_properties" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Organization Properties</label>
+                <field id="company_name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Name</label>
+                </field>
+                <field id="company_street" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Street</label>
+                </field>
+                <field id="company_postalcode" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Postalcode</label>
+                </field>
+                <field id="company_location" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Location/City</label>
+                </field>
+                <field id="company_fax" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fax</label>
+                </field>
+                <field id="company_phone" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Phone</label>
+                </field>
+                <field id="company_email" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email</label>
+                </field>
+                <field id="company_founding_date" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Founding Date</label>
+                </field>
+                <field id="company_brand" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Brand</label>
+                </field>
+                <field id="company_url" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website</label>
+                </field>
+                <field id="company_logo" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Logo</label>
+                    <comment>Absolute URL to company logo</comment>
+                </field>
+            </group>
+            <group id="open_graph" translate="label" type="text" sortOrder="30" showInDefault="1"
                    showInWebsite="1" showInStore="1">
                 <label>Facebook Open Graph</label>
                 <field id="facebook_enable" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"

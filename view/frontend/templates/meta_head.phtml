@@ -19,67 +19,15 @@
 
 /** @var $block \Magenerds\RichSnippet\Block\Schemaorg */
 
-/* @var \Magento\Catalog\Model\Product $product */
-$product = $this->getProduct();
-$reviews = $this->getReviews();
-$color = $this->getColor();
-$logoUrl = $this->getLogo();
-$description = $this->getDescription();
-$sku = $this->getSku();
-$productId = $this->getProductId();
-$brand = $this->getBrand();
-
-/* @var \Magento\Review\Model\Review\Summary $summaryModel */
-$summaryModel = $this->getReviewSummary();
-$reviewCount = $summaryModel->getReviewsCount();
-if (!$reviewCount) {
-    $reviewCount = 0;
+$productJson = '';
+$productData = $block->getProductSchema();
+if (!empty($productData)) {
+    $productJson = json_encode($productData);
 }
-$ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
-?>
 
-<script type="application/ld+json">
-    {
-        "@context": "https://schema.org/",
-        "@type": "Product",
-        "name": "<?php /* @escapeNotVerified */ echo $block->escapeQuote($block->stripTags($product->getName())); ?>",
-<?php if ($block->valueIsSet($color)): ?>
-        "color": "<?php /* @escapeNotVerified */ echo $block->stripTags($color); ?>",
+?>
+<?php if ($block->valueIsSet($productJson)): ?>
+    <?php
+    echo '<script type="application/ld+json">'.$productJson.'</script>'
+    ?>
 <?php endif; ?>
-<?php if ($block->valueIsSet($logoUrl)): ?>
-        "logo": "<?php /* @escapeNotVerified */ echo $logoUrl; ?>",
-<?php endif; ?>
-<?php if ($block->valueIsSet($description)): ?>
-        "description": "<?php echo /* @escapeNotVerified */  $block->escapeQuote($block->stripTags($description)); ?>",
-<?php endif; ?>
-        "sku": "<?php /* @escapeNotVerified */ echo $sku; ?>",
-<?php if ($block->valueIsSet($productId)): ?>
-        "productID": "<?php /* @escapeNotVerified */ echo __('Art.nr.:') . $block->stripTags($productId); ?>",
-<?php endif; ?>
-<?php if ($block->valueIsSet($brand)): ?>
-        "brand": {
-            "@type": "Thing",
-            "name": "<?php /* @escapeNotVerified */ echo $block->stripTags($brand); ?>"
-        },
-<?php endif; ?>
-<?php if($reviewCount > 0): ?>
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "bestRating": 5,
-            "worstRating": 1,
-            "ratingValue": "<?php echo $ratingSummary / 20 ; ?>",
-            "reviewCount": "<?php echo $reviewCount ?>"
-        },
-<?php endif; ?>
-        "offers": {
-            "@type": "Offer",
-            "priceCurrency": "<?php echo $block->getCurrencyCode(); ?>",
-<?php if ($product->isAvailable()): ?>
-            "availability": "https://schema.org/InStock",
-<?php else : ?>
-            "availability": "https://schema.org/OutOfStock",
-<?php endif; ?>
-            "price": "<?php echo $product->getFinalPrice(); ?>"
-        }
-    }
-</script>

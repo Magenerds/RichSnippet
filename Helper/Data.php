@@ -90,6 +90,17 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Load any config value
+     *
+     * @param int $storeId int
+     * @return string
+     */
+    public function getDynamicConfigValue($name, $second, $storeId = 0)
+    {
+        return $this->getConfig($storeId, $name, $second);
+    }
+
+    /**
      * Load facebook_app_id config value
      *
      * @param int $storeId
@@ -107,12 +118,12 @@ class Data extends AbstractHelper
      * @param $name string configname
      * @return mixed
      */
-    protected function getConfig($storeId, $name)
+    protected function getConfig($storeId, $name, $second = 'product_properties')
     {
         if ($storeId) {
-            return $this->scopeConfig->getValue('richsnippet/product_properties/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
+            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
         } else {
-            return $this->scopeConfig->getValue('richsnippet/product_properties/' . $name);
+            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name);
         }
     }
 }
