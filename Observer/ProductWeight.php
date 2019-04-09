@@ -35,7 +35,7 @@ class ProductWeight implements ObserverInterface
         $weight = $this->getProductSchemaData($weight, $productModel->getWeight(), 'value');
         if (!empty($weight)) {
             $weight['@type'] = 'QuantitativeValue';
-            $productSchema['weightOberserver'] = $weight;
+            $productSchema['weight'] = $weight;
         }
     }
 
