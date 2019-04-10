@@ -302,7 +302,13 @@ class Schemaorg extends Template
         return $product;
     }
 
-    public function getOrganizationSchemaData(array $data, $name, $key)
+    /**
+     * @param array|DataObject $data
+     * @param mixed $name
+     * @param string $key
+     * @return array|DataObject
+     */
+    public function getOrganizationSchemaData($data, $name, $key)
     {
         $value = $this->helper->getDynamicConfigValue($name, 'organization_properties');
         if ($this->valueIsSet($value)) {
@@ -311,7 +317,13 @@ class Schemaorg extends Template
         return $data;
     }
 
-    public function getProductSchemaData(array $data, $value, $key)
+    /**
+     * @param array|DataObject $data
+     * @param mixed $value
+     * @param string $key
+     * @return array|DataObject
+     */
+    public function getProductSchemaData($data, $value, $key)
     {
         if (is_string($value)) {
             if ($this->valueIsSet($value)) {
@@ -329,7 +341,7 @@ class Schemaorg extends Template
      * @param $code
      * @return string
      */
-    protected function getAttribute($code)
+    public function getAttribute($code)
     {
         $attributeValue = '';
 
