@@ -252,16 +252,14 @@ class Schemaorg extends Template
     {
         $productModel = $this->getProduct();
         $product = [];
-        $aggregateRating = [];
         $offers = [];
-        $brand = [];
 
         $summaryModel = $this->getReviewSummary();
         $reviewCount = $summaryModel->getReviewsCount();
         $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
 
         if ($reviewCount > 0) {
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, 5, 'bestRating');
+            $aggregateRating = $this->getProductSchemaData([], 5, 'bestRating');
             $aggregateRating = $this->getProductSchemaData($aggregateRating, 1, 'worstRating');
             $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
             $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
@@ -275,9 +273,10 @@ class Schemaorg extends Template
         $offers = $this->getProductSchemaData($offers, $this->getCurrencyCode(), 'priceCurrency');
         $offers = $this->getProductSchemaData($offers, $productModel->isAvailable() ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", 'availability');
         $offers = $this->getProductSchemaData($offers, $productModel->getFinalPrice(), 'price');
+        $offers = $this->getProductSchemaData($offers, $productModel->getUrlModel()->getUrl($productModel), 'url');
         $product['offers'] = $offers;
 
-        $brand = $this->getProductSchemaData($brand, $this->getBrand(), 'name');
+        $brand = $this->getProductSchemaData([], $this->getBrand(), 'name');
         if (!empty($brand)) {
             $brand['@type'] = 'Thing';
             $product['brand'] = $brand;
@@ -289,7 +288,6 @@ class Schemaorg extends Template
         $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($this->getDescription())), 'description');
         $product = $this->getProductSchemaData($product, $this->getSku(), 'sku');
         $product = $this->getProductSchemaData($product, ($this->getProductId() ? __('Art.nr.:') . $this->stripTags($this->getProductId()) : ''), 'productID');
-        $product = $this->getProductSchemaData($product, $productModel->getUrlModel()->getUrl($productModel), 'url');
         $product = $this->getProductSchemaData($product, $productModel->getMediaGalleryImages()->getFirstItem()->getUrl(), 'image');
 
         if (!empty($product)) {
@@ -304,7 +302,7 @@ class Schemaorg extends Template
         return $product;
     }
 
-    protected function getOrganizationSchemaData(array $data, $name, $key)
+    public function getOrganizationSchemaData(array $data, $name, $key)
     {
         $value = $this->helper->getDynamicConfigValue($name, 'organization_properties');
         if ($this->valueIsSet($value)) {
@@ -313,7 +311,7 @@ class Schemaorg extends Template
         return $data;
     }
 
-    protected function getProductSchemaData(array $data, $value, $key)
+    public function getProductSchemaData(array $data, $value, $key)
     {
         if (is_string($value)) {
             if ($this->valueIsSet($value)) {

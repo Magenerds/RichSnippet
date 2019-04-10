@@ -9,6 +9,7 @@
 
 namespace Magenerds\Richsnippet\Observer;
 
+use Magenerds\RichSnippet\Block\Schemaorg;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 /**
@@ -20,6 +21,17 @@ use Magento\Framework\Event\ObserverInterface;
  */
 class ProductWeight implements ObserverInterface
 {
+    /** @var Schemaorg */
+    private $schemaorg;
+
+    /**
+     * @param Schemaorg $schemaorg
+     */
+    public function __construct(Schemaorg $schemaorg)
+    {
+        $this->schemaorg = $schemaorg;
+    }
+
     /**
      * Execute observer function
      *
@@ -32,23 +44,10 @@ class ProductWeight implements ObserverInterface
         $productModel = $observer->getData('productModel');
 
         $weight = [];
-        $weight = $this->getProductSchemaData($weight, $productModel->getWeight(), 'value');
+        $weight = $this->schemaorg->getProductSchemaData($weight, $productModel->getWeight(), 'value');
         if (!empty($weight)) {
             $weight['@type'] = 'QuantitativeValue';
             $productSchema['weight'] = $weight;
         }
-    }
-
-
-    protected function getProductSchemaData(array $data, $value, $key)
-    {
-        if (is_string($value)) {
-            if ($this->valueIsSet($value)) {
-                $data[$key] = $value;
-            }
-        } elseif ($value !== null && $value !== false) {
-            $data[$key] = $value;
-        }
-        return $data;
     }
 }
