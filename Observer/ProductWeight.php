@@ -46,7 +46,7 @@ class ProductWeight implements ObserverInterface
             if ($this->valueIsSet($value)) {
                 $data[$key] = $value;
             }
-        } elseif ($value !== null) {
+        } elseif ($value !== null && $value !== false) {
             $data[$key] = $value;
         }
         return $data;
