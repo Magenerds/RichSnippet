@@ -19,13 +19,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="magenerds" translate="label" sortOrder="1000">
+        <tab id="Magenerds" translate="label" sortOrder="1000">
             <label>Magenerds</label>
         </tab>
         <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                  showInStore="1">
             <label>RichSnippet</label>
-            <tab>magenerds</tab>
+            <tab>Magenerds</tab>
             <resource>Magenerds_RichSnippet::config_richsnippet</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="1">
