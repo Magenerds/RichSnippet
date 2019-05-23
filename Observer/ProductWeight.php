@@ -9,7 +9,7 @@
 
 namespace Magenerds\Richsnippet\Observer;
 
-use Magenerds\RichSnippet\Block\Schemaorg;
+use Magenerds\RichSnippet\Block\SchemaOrg;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -22,13 +22,17 @@ use Magento\Framework\Event\ObserverInterface;
  */
 class ProductWeight implements ObserverInterface
 {
-    /** @var Schemaorg */
-    private $schemaorg;
+    /**
+     * @var SchemaOrg
+     */
+    protected $schemaorg;
 
     /**
-     * @param Schemaorg $schemaorg
+     * ProductWeight constructor.
+     *
+     * @param SchemaOrg $schemaorg
      */
-    public function __construct(Schemaorg $schemaorg)
+    public function __construct(SchemaOrg $schemaorg)
     {
         $this->schemaorg = $schemaorg;
     }

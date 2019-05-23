@@ -7,6 +7,8 @@
  * http://opensource.org/licenses/osl-3.0.php
  */
 
+use Magenerds\RichSnippet\Block\FacebookOpenGraph;
+
 /**
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
@@ -16,16 +18,16 @@
  * @author     Julia Mehringer <j.mehringer@techdivision.com>
  */
 
-/** @var $block \Magenerds\RichSnippet\Block\Facebookopengraph */
+/** @var $block FacebookOpenGraph */
 
 $fbAppId = $block->getFacebookAppId();
+/** @noinspection PhpUnhandledExceptionInspection */
+$ogData = $block->getOpenGraphData()
 ?>
 <!--  facebook open graph -->
 <?php if ($fbAppId) : ?>
     <meta property="fb:app_id" content="<?php echo $fbAppId; ?>"/>
 <?php endif; ?>
-
-<?php $ogData = $block->getOpenGraphData(); ?>
 
 <?php foreach ($ogData as $key => $value): ?>
     <?php if (isset($key)): ?>

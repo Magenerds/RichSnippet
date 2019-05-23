@@ -17,7 +17,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
  * Class AbstractAttributeConfig
  *
  * @package     Magenerds\RichSnippet\Model\Config\Source
- * @file        Schemaorg.php
+ * @file        AbstractAttributeConfig.php
  * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
@@ -32,6 +32,7 @@ class AbstractAttributeConfig implements ArrayInterface
 
     /**
      * AbstractAttributeConfig constructor.
+     *
      * @param CollectionFactory $attributeCollectionFactory
      */
     public function __construct(
@@ -44,7 +45,8 @@ class AbstractAttributeConfig implements ArrayInterface
     /**
      * Return list of Attributes for Brand Options
      *
-     * @return [] config attribute info
+     * @param string|array $filter
+     * @return array
      */
     public function toOptionArray($filter = null)
     {

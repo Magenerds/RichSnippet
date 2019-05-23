@@ -7,6 +7,8 @@
  * http://opensource.org/licenses/osl-3.0.php
  */
 
+use Magenerds\RichSnippet\Block\SchemaOrg;
+
 /**
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
@@ -16,17 +18,15 @@
  * @author     Martin Eisenführer <m.eisenfuehrer@techdivision.com>
  */
 
-/** @var $block \Magenerds\RichSnippet\Block\Schemaorg */
+/** @var $block SchemaOrg */
 
 $organizationJson = '';
 $organization = $block->getOrganizationSchema();
 if (!empty($organization)) {
     $organizationJson = json_encode($organization);
 }
-
+if (!$block->valueIsSet($organizationJson)) {
+    return;
+}
 ?>
-<?php if ($block->valueIsSet($organizationJson)): ?>
-    <?php
-    echo '<script type="application/ld+json">' . $organizationJson . '</script>'
-    ?>
-<?php endif; ?>
+<script type="application/ld+json"><?php echo $organizationJson; ?></script>

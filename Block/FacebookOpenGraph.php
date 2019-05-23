@@ -13,6 +13,8 @@ use Magento\Catalog\Block\Product\Image;
 use Magento\Catalog\Block\Product\ImageBuilder;
 use Magento\Catalog\Model\Category;
 use Magento\Cms\Model\Page;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
@@ -21,15 +23,15 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Class Facebookopengraph
+ * Class FacebookOpenGraph
  *
  * @package     Magenerds\RichSnippet\Block
- * @file        Schemaorg.php
+ * @file        FacebookOpenGraph.php
  * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Julia Mehringer <j.mehringer@techdivision.com>
  */
-class Facebookopengraph extends Template
+class FacebookOpenGraph extends Template
 {
     /**
      * @var Registry
@@ -49,10 +51,11 @@ class Facebookopengraph extends Template
     /**
      * @var DirectoryList
      */
-    private $directoryList;
+    protected $directoryList;
 
     /**
-     * Schemaorg constructor.
+     * FacebookOpenGraph constructor.
+     *
      * @param Registry $registry
      * @param Data $helper
      * @param ImageBuilder $imageBuilder
@@ -81,7 +84,7 @@ class Facebookopengraph extends Template
      *
      * @return Product
      */
-    private function getProduct()
+    protected function getProduct()
     {
         return $this->coreRegistry->registry('product');
     }
@@ -91,7 +94,7 @@ class Facebookopengraph extends Template
      *
      * @return Category
      */
-    private function getCategory()
+    protected function getCategory()
     {
         return $this->coreRegistry->registry('current_category');
     }
@@ -102,7 +105,7 @@ class Facebookopengraph extends Template
      * @param $path
      * @return mixed
      */
-    private function getTypeExension($path)
+    protected function getTypeExension($path)
     {
         return pathinfo($path, PATHINFO_EXTENSION);
     }
@@ -113,10 +116,9 @@ class Facebookopengraph extends Template
      * @param Product $product
      * @param string $imageId
      * @param array $attributes
-     *
      * @return Image
      */
-    private function getImage($product, $imageId, $attributes = [])
+    protected function getImage($product, $imageId, $attributes = [])
     {
         return $this->imageBuilder->setProduct($product)
             ->setImageId($imageId)
@@ -129,7 +131,7 @@ class Facebookopengraph extends Template
      *
      * @return string
      */
-    private function getCurrentUrl()
+    protected function getCurrentUrl()
     {
         return $this->_urlBuilder->getCurrentUrl();
     }
@@ -139,7 +141,7 @@ class Facebookopengraph extends Template
      *
      * @return string
      */
-    private function getCategoryTitle()
+    protected function getCategoryTitle()
     {
         $title = $this->getCategory()->getData('meta_title');
         if ($title) {
@@ -153,7 +155,7 @@ class Facebookopengraph extends Template
      *
      * @return string
      */
-    private function getCategoryDescription()
+    protected function getCategoryDescription()
     {
         $description = $this->getCategory()->getData('meta_description');
         if ($description) {
@@ -166,8 +168,9 @@ class Facebookopengraph extends Template
      * Returns the category image url
      *
      * @return string
+     * @throws LocalizedException
      */
-    private function getCategoryImageUrl()
+    protected function getCategoryImageUrl()
     {
         return $this->getCategory()->getImageUrl();
     }
@@ -176,9 +179,11 @@ class Facebookopengraph extends Template
      * Gets the filesystem path of the category image
      *
      * @return string
+     * @throws FileSystemException
      */
-    private function getCategoryImage()
+    protected function getCategoryImage()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->directoryList->getPath(DirectoryList::MEDIA) . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'category' . DIRECTORY_SEPARATOR . $this->getCategory()->getImage();
     }
 
@@ -186,8 +191,9 @@ class Facebookopengraph extends Template
      * Returns the size information for the category image
      *
      * @return array|bool
+     * @throws FileSystemException
      */
-    private function getCategoryImageSize()
+    protected function getCategoryImageSize()
     {
         $image = $this->getCategoryImage();
 
@@ -201,9 +207,11 @@ class Facebookopengraph extends Template
      * Returns CMS page
      *
      * @return Page
+     * @throws LocalizedException
      */
-    private function getCmsPage()
+    protected function getCmsPage()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->getLayout()->getBlock('cms_page')->getPage();
     }
 
@@ -211,8 +219,9 @@ class Facebookopengraph extends Template
      * Returns the title of the CMS page
      *
      * @return string
+     * @throws LocalizedException
      */
-    private function getCmsPageTitle()
+    protected function getCmsPageTitle()
     {
         $title = $this->getCmsPage()->getTitle();
         if ($title) {
@@ -225,8 +234,9 @@ class Facebookopengraph extends Template
      * Returns the CMS Page meta description
      *
      * @return string
+     * @throws LocalizedException
      */
-    private function getCmsDescription()
+    protected function getCmsDescription()
     {
         $page = $this->getCmsPage();
         if ($page && $page->getData('meta_description')) {
@@ -249,11 +259,14 @@ class Facebookopengraph extends Template
      * Returns the data needed to render the meta tags
      *
      * @return array
+     * @throws FileSystemException
+     * @throws LocalizedException
      */
     public function getOpenGraphData()
     {
         $ogData = [];
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($this->getRequest()->getFullActionName() === 'catalog_product_view') {
             $productImage = $this->getImage($this->getProduct(), 'product_base_image');
 
@@ -264,9 +277,8 @@ class Facebookopengraph extends Template
                 $ogData['image:width'] = $productImage->getWidth();
                 $ogData['image:height'] = $productImage->getHeight();
             }
-        }
-
-        if ($this->getRequest()->getFullActionName() === 'catalog_category_view') {
+        } /** @noinspection PhpUndefinedMethodInspection */
+        elseif ($this->getRequest()->getFullActionName() === 'catalog_category_view') {
             $categoryImage = $this->getCategoryImage();
             $categoryImageUrl = $this->getCategoryImageUrl();
             $categoryImageSize = $this->getCategoryImageSize();
@@ -275,6 +287,7 @@ class Facebookopengraph extends Template
             $ogData['title'] = $this->escapeHtml($this->getCategoryTitle());
             $ogData['description'] = $this->escapeHtml($this->getCategoryDescription());
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
+
             if ($categoryImage) {
                 $ogData['image'] = $this->escapeUrl($categoryImageUrl);
                 $ogData['image:secure_url'] = $this->escapeUrl($categoryImageUrl);
@@ -284,9 +297,8 @@ class Facebookopengraph extends Template
                     $ogData['image:height'] = $categoryImageSize[1];
                 }
             }
-        }
-
-        if ($this->getRequest()->getFullActionName() === 'cms_page_view') {
+        } /** @noinspection PhpUndefinedMethodInspection */
+        elseif ($this->getRequest()->getFullActionName() === 'cms_page_view') {
             $ogData['type'] = 'article';
             $ogData['title'] = $this->escapeHtml($this->getCmsPageTitle());
             $ogData['description'] = $this->getCmsDescription();

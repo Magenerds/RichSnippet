@@ -6,6 +6,9 @@
  * that is available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  */
+
+use Magento\Framework\Component\ComponentRegistrar;
+
 /**
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
@@ -15,8 +18,4 @@
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
  * @author     Philipp Steinkopff <p.steinkopff@techdivision.com>
  */
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Magenerds_RichSnippet',
-    __DIR__
-);
+ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Magenerds_RichSnippet', __DIR__);

@@ -15,7 +15,7 @@ use Magento\Framework\Option\ArrayInterface;
  * Class Description
  *
  * @package     Magenerds\RichSnippet\Model\Config\Source
- * @file        Schemaorg.php
+ * @file        Description.php
  * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
@@ -26,17 +26,17 @@ class Description implements ArrayInterface
     /**
      * Return list of Description Options
      *
-     * @return [] config attribute info
+     * @return array config attribute info
      */
     public function toOptionArray()
     {
         return [
             [
-                'value' => '0',
+                'value' => 0,
                 'label' => __('Short Description')
             ],
             [
-                'value' => '1',
+                'value' => 1,
                 'label' => __('Long Description')
             ]
         ];

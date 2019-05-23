@@ -13,6 +13,7 @@ use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager as EventManager;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
@@ -21,16 +22,16 @@ use Magento\Review\Model\Review\SummaryFactory;
 use Magento\Theme\Block\Html\Header\Logo;
 
 /**
- * Class Schemaorg
+ * Class SchemaOrg
  *
  * @package     Magenerds\RichSnippet\Block
- * @file        Schemaorg.php
+ * @file        SchemaOrg.php
  * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Philipp Steinkopff <p.steinkopff@techdivision.com>
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
  */
-class Schemaorg extends Template
+class SchemaOrg extends Template
 {
     /**
      * @var Registry
@@ -51,11 +52,14 @@ class Schemaorg extends Template
      * @var Logo
      */
     protected $logo;
-    /** @var EventManager */
-    private $eventManager;
 
     /**
-     * Schemaorg constructor.
+     * @var EventManager
+     */
+    protected $eventManager;
+
+    /**
+     * SchemaOrg constructor.
      *
      * @param Registry $registry
      * @param SummaryFactory $reviewSummaryFactory
@@ -134,6 +138,7 @@ class Schemaorg extends Template
 
     /**
      * @return Summary
+     * @throws NoSuchEntityException
      */
     public function getReviewSummary()
     {
@@ -142,16 +147,17 @@ class Schemaorg extends Template
         /** @var $reviewSummary Summary */
         $reviewSummary = $this->reviewSummaryFactory->create();
         $reviewSummary->setData('store_id', $storeId);
-        $summaryModel = $reviewSummary->load($this->getProduct()->getId());
-
-        return $summaryModel;
+        /** @noinspection PhpDeprecationInspection */
+        return $reviewSummary->load($this->getProduct()->getId());
     }
 
     /**
      * @return string
+     * @throws NoSuchEntityException
      */
     public function getCurrencyCode()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         return $this->_storeManager->getStore()->getCurrentCurrencyCode();
     }
 
@@ -241,13 +247,12 @@ class Schemaorg extends Template
 
         $organizationData = new DataObject($organization);
         $this->eventManager->dispatch('organization_schema_add_as_last', ['organizationSchema' => $organizationData]);
-        $organization = $organizationData->convertToArray();
-
-        return $organization;
+        return $organizationData->convertToArray();
     }
 
     /**
      * @return array
+     * @throws NoSuchEntityException
      */
     public function getProductSchema()
     {
@@ -283,12 +288,15 @@ class Schemaorg extends Template
             $product['brand'] = $brand;
         }
 
+        /** @noinspection PhpDeprecationInspection */
         $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($productModel->getName())), 'name');
         $product = $this->getProductSchemaData($product, $this->stripTags($this->getColor()), 'color');
         $product = $this->getProductSchemaData($product, $this->getLogo(), 'logo');
+        /** @noinspection PhpDeprecationInspection */
         $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($this->getDescription())), 'description');
         $product = $this->getProductSchemaData($product, $this->getSku(), 'sku');
         $product = $this->getProductSchemaData($product, ($this->getProductId() ? __('Art.nr.:') . $this->stripTags($this->getProductId()) : ''), 'productID');
+        /** @noinspection PhpUndefinedMethodInspection */
         $product = $this->getProductSchemaData($product, $productModel->getMediaGalleryImages()->getFirstItem()->getUrl(), 'image');
 
         if (!empty($product)) {
@@ -298,9 +306,7 @@ class Schemaorg extends Template
 
         $productData = new DataObject($product);
         $this->eventManager->dispatch('product_schema_add_as_last', ['productSchema' => $productData, 'productModel' => $productModel]);
-        $product = $productData->convertToArray();
-
-        return $product;
+        return $productData->convertToArray();
     }
 
     /**
@@ -346,12 +352,14 @@ class Schemaorg extends Template
     {
         $attributeValue = '';
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $attribute = $this->getProduct()->getResource()->getAttribute($code);
 
         if (!$attribute) {
             return $attributeValue;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if (in_array($attribute->getFrontendInput(), ['select', 'multiselect'])) {
             $attributeValue = $this->getProduct()->getAttributeText($code);
         } else {

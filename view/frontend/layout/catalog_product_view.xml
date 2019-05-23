@@ -1,26 +1,16 @@
 <?xml version="1.0"?>
 <!--
-/**
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- */
-/**
- * @category   Magenerds
- * @package    Magenerds_RichSnippet
- * @subpackage view
- * @author     Belinda Tschampel <b.tschampel@techdivision.com>
- * @copyright  Copyright (c) 2016 TechDivision GmbH (https://www.techdivision.com)
- * @link       https://www.techdivision.com/
- */
- -->
+ ~ NOTICE OF LICENSE
+ ~
+ ~ This source file is subject to the Open Software License (OSL 3.0)
+ ~ that is available through the world-wide-web at this URL:
+ ~ http://opensource.org/licenses/osl-3.0.php
+-->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
-            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\Schemaorg" name="magenerds.schemaorg" template="Magenerds_RichSnippet::meta_head.phtml"/>
-            <block ifconfig="richsnippet/open_graph/facebook_enable" class="Magenerds\RichSnippet\Block\Facebookopengraph" name="magenerds.facebookopengraph" template="Magenerds_RichSnippet::facebookopengraph_head.phtml"/>
+            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\SchemaOrg" name="magenerds.schema.org" template="Magenerds_RichSnippet::meta_head.phtml"/>
+            <block ifconfig="richsnippet/open_graph/facebook_enable" class="Magenerds\RichSnippet\Block\FacebookOpenGraph" name="magenerds.facebook.open.graph" template="Magenerds_RichSnippet::facebookopengraph_head.phtml"/>
         </referenceBlock>
     </body>
 </page>

@@ -14,8 +14,8 @@ use Magento\Store\Model\ScopeInterface;
 
 /**
  * @category   Magenerds
- * @package    Magenerds_RichSnippet
- * @subpackage Block
+ * @package    Magenerds\RichSnippet\Helper
+ * @subpackage Helper
  * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @link       https://www.techdivision.com/
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
@@ -92,10 +92,12 @@ class Data extends AbstractHelper
     /**
      * Load any config value
      *
-     * @param int $storeId int
-     * @return string
+     * @param string $name
+     * @param string $second
+     * @param int $storeId
+     * @return mixed
      */
-    public function getDynamicConfigValue($name, $second, $storeId = 0)
+    public function getDynamicConfigValue($name, $second = 'product_properties', $storeId = 0)
     {
         return $this->getConfig($storeId, $name, $second);
     }
@@ -114,8 +116,9 @@ class Data extends AbstractHelper
     /**
      * Returns system configuration
      *
-     * @param $storeId int store id
-     * @param $name string configname
+     * @param int $storeId int store id
+     * @param string $name string config name
+     * @param string $second
      * @return mixed
      */
     protected function getConfig($storeId, $name, $second = 'product_properties')

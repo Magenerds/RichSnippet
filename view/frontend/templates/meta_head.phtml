@@ -8,6 +8,8 @@
  * http://opensource.org/licenses/osl-3.0.php
  */
 
+use Magenerds\RichSnippet\Block\SchemaOrg;
+
 /**
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
@@ -17,17 +19,16 @@
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
  */
 
-/** @var $block \Magenerds\RichSnippet\Block\Schemaorg */
+/** @var $block SchemaOrg */
 
 $productJson = '';
+/** @noinspection PhpUnhandledExceptionInspection */
 $productData = $block->getProductSchema();
 if (!empty($productData)) {
     $productJson = json_encode($productData);
 }
-
+if (!$block->valueIsSet($productJson)) {
+    return;
+}
 ?>
-<?php if ($block->valueIsSet($productJson)): ?>
-    <?php
-    echo '<script type="application/ld+json">' . $productJson . '</script>'
-    ?>
-<?php endif; ?>
+<script type="application/ld+json"><?php echo $productJson; ?></script>

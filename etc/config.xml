@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+ ~ NOTICE OF LICENSE
+ ~
+ ~ This source file is subject to the Open Software License (OSL 3.0)
+ ~ that is available through the world-wide-web at this URL:
+ ~ http://opensource.org/licenses/osl-3.0.php
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <richsnippet>
+            <general>
+                <enable>1</enable>
+                <logo>0</logo>
+            </general>
+            <product_properties>
+                <color>color</color>
+                <description>description</description>
+                <sku>sku</sku>
+                <product_id>sku</product_id>
+                <brand>manufacturer</brand>
+            </product_properties>
+            <organization_properties>
+                <company_name/>
+                <company_street/>
+                <company_postalcode/>
+                <company_location/>
+                <company_fax/>
+                <company_phone/>
+                <company_email/>
+                <company_founding_date/>
+                <company_brand/>
+                <company_url/>
+                <company_logo/>
+            </organization_properties>
+            <open_graph>
+                <facebook_enable>0</facebook_enable>
+                <facebook_app_id/>
+            </open_graph>
+        </richsnippet>
+    </default>
+</config>
