@@ -11,8 +11,8 @@
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
  * @subpackage view
- * @copyright  Copyright (c) 2019 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  * @author     Martin Eisenführer <m.eisenfuehrer@techdivision.com>
  */
 
@@ -27,6 +27,6 @@ if (!empty($organization)) {
 ?>
 <?php if ($block->valueIsSet($organizationJson)): ?>
     <?php
-        echo '<script type="application/ld+json">'.$organizationJson.'</script>'
+    echo '<script type="application/ld+json">' . $organizationJson . '</script>'
     ?>
 <?php endif; ?>

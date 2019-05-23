@@ -25,7 +25,7 @@ use Magento\Theme\Block\Html\Header\Logo;
  *
  * @package     Magenerds\RichSnippet\Block
  * @file        Schemaorg.php
- * @copyright   Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
+ * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Philipp Steinkopff <p.steinkopff@techdivision.com>
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
@@ -73,7 +73,8 @@ class Schemaorg extends Template
         Context $context,
         EventManager $eventManager,
         $data = []
-    ) {
+    )
+    {
         $this->coreRegistry = $registry;
         $this->reviewSummaryFactory = $reviewSummaryFactory;
         $this->helper = $helper;

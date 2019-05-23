@@ -13,14 +13,14 @@
  * @package    Magenerds_RichSnippet
  * @subpackage view
  * @author     Julia Mehringer <j.mehringer@techdivision.com>
- * @copyright  Copyright (c) 2018 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  */
  -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
-            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\Schemaorg" name="magenerds.schemaorg.organization" template="Magenerds_RichSnippet::meta_head_organization.phtml" />
+            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\Schemaorg" name="magenerds.schemaorg.organization" template="Magenerds_RichSnippet::meta_head_organization.phtml"/>
         </referenceBlock>
     </body>
 </page>

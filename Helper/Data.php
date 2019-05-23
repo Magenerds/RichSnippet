@@ -16,8 +16,8 @@ use Magento\Store\Model\ScopeInterface;
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
  * @subpackage Block
- * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
  * @author     Philipp Steinkopff <p.steinkopff@techdivision.com>
  */
@@ -121,9 +121,9 @@ class Data extends AbstractHelper
     protected function getConfig($storeId, $name, $second = 'product_properties')
     {
         if ($storeId) {
-            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
+            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
         } else {
-            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name);
+            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name);
         }
     }
 }

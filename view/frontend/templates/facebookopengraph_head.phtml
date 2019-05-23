@@ -11,8 +11,8 @@
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
  * @subpackage view
- * @copyright  Copyright (c) 2018 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  * @author     Julia Mehringer <j.mehringer@techdivision.com>
  */
 
@@ -22,13 +22,13 @@ $fbAppId = $block->getFacebookAppId();
 ?>
 <!--  facebook open graph -->
 <?php if ($fbAppId) : ?>
-    <meta property="fb:app_id" content="<?php echo $fbAppId; ?>" />
+    <meta property="fb:app_id" content="<?php echo $fbAppId; ?>"/>
 <?php endif; ?>
 
 <?php $ogData = $block->getOpenGraphData(); ?>
 
-<?php foreach($ogData as $key => $value): ?>
-    <?php if(isset($key)): ?>
+<?php foreach ($ogData as $key => $value): ?>
+    <?php if (isset($key)): ?>
         <meta property="og:<?php echo $key ?>" content="<?php echo $value ?>">
     <?php endif; ?>
 <?php endforeach; ?>

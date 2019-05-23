@@ -1,4 +1,4 @@
-# Magenerds_RichSnippet
+# Magenerds RichSnippet
 
 * Add some Magento2 product information from https://schema.org/Product 
 * Add some organization information from https://schema.org/Organization

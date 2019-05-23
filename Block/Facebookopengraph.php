@@ -25,7 +25,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  *
  * @package     Magenerds\RichSnippet\Block
  * @file        Schemaorg.php
- * @copyright   Copyright (c) 2018 TechDivision GmbH (http://www.techdivision.com)
+ * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Julia Mehringer <j.mehringer@techdivision.com>
  */
@@ -142,7 +142,7 @@ class Facebookopengraph extends Template
     private function getCategoryTitle()
     {
         $title = $this->getCategory()->getData('meta_title');
-        if($title) {
+        if ($title) {
             return $title;
         }
         return '';
@@ -156,7 +156,7 @@ class Facebookopengraph extends Template
     private function getCategoryDescription()
     {
         $description = $this->getCategory()->getData('meta_description');
-        if($description) {
+        if ($description) {
             return $description;
         }
         return '';
@@ -191,7 +191,7 @@ class Facebookopengraph extends Template
     {
         $image = $this->getCategoryImage();
 
-        if(is_file($image)) {
+        if (is_file($image)) {
             return getimagesize($image);
         }
         return false;
@@ -215,7 +215,7 @@ class Facebookopengraph extends Template
     private function getCmsPageTitle()
     {
         $title = $this->getCmsPage()->getTitle();
-        if($title) {
+        if ($title) {
             return $title;
         }
         return '';
@@ -229,7 +229,7 @@ class Facebookopengraph extends Template
     private function getCmsDescription()
     {
         $page = $this->getCmsPage();
-        if($page && $page->getData('meta_description')) {
+        if ($page && $page->getData('meta_description')) {
             return $page->getData('meta_description');
         }
         return '';
@@ -254,10 +254,10 @@ class Facebookopengraph extends Template
     {
         $ogData = [];
 
-        if($this->getRequest()->getFullActionName() === 'catalog_product_view') {
+        if ($this->getRequest()->getFullActionName() === 'catalog_product_view') {
             $productImage = $this->getImage($this->getProduct(), 'product_base_image');
 
-            if($productImage) {
+            if ($productImage) {
                 $imageUrl = $productImage->getImageUrl();
                 $ogData['image:secure_url'] = $this->escapeUrl($imageUrl);
                 $ogData['image:type'] = $this->getTypeExension($imageUrl);
@@ -266,7 +266,7 @@ class Facebookopengraph extends Template
             }
         }
 
-        if($this->getRequest()->getFullActionName() === 'catalog_category_view') {
+        if ($this->getRequest()->getFullActionName() === 'catalog_category_view') {
             $categoryImage = $this->getCategoryImage();
             $categoryImageUrl = $this->getCategoryImageUrl();
             $categoryImageSize = $this->getCategoryImageSize();
@@ -275,18 +275,18 @@ class Facebookopengraph extends Template
             $ogData['title'] = $this->escapeHtml($this->getCategoryTitle());
             $ogData['description'] = $this->escapeHtml($this->getCategoryDescription());
             $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
-            if($categoryImage) {
+            if ($categoryImage) {
                 $ogData['image'] = $this->escapeUrl($categoryImageUrl);
                 $ogData['image:secure_url'] = $this->escapeUrl($categoryImageUrl);
                 $ogData['image:type'] = $this->getTypeExension($categoryImageUrl);
-                if($categoryImageSize) {
+                if ($categoryImageSize) {
                     $ogData['image:width'] = $categoryImageSize[0];
                     $ogData['image:height'] = $categoryImageSize[1];
                 }
             }
         }
 
-        if($this->getRequest()->getFullActionName() === 'cms_page_view') {
+        if ($this->getRequest()->getFullActionName() === 'cms_page_view') {
             $ogData['type'] = 'article';
             $ogData['title'] = $this->escapeHtml($this->getCmsPageTitle());
             $ogData['description'] = $this->getCmsDescription();

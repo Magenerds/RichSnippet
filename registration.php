@@ -10,8 +10,8 @@
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
  * @subpackage Module
- * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
  * @author     Philipp Steinkopff <p.steinkopff@techdivision.com>
  */

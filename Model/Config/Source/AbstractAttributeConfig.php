@@ -6,6 +6,7 @@
  * that is available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  */
+
 namespace Magenerds\RichSnippet\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
@@ -17,7 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
  *
  * @package     Magenerds\RichSnippet\Model\Config\Source
  * @file        Schemaorg.php
- * @copyright   Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
+ * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
  * @author      Philipp Steinkopff <p.steinkopff@techdivision.com>
@@ -35,7 +36,8 @@ class AbstractAttributeConfig implements ArrayInterface
      */
     public function __construct(
         CollectionFactory $attributeCollectionFactory
-    ){
+    )
+    {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
     }
 

@@ -12,10 +12,11 @@ namespace Magenerds\Richsnippet\Observer;
 use Magenerds\RichSnippet\Block\Schemaorg;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+
 /**
  * Class ProductWeight
  *
- * @copyright   Copyright (c) 2019 TechDivision GmbH (http://www.techdivision.com)
+ * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
  * @author      Martin Eisenführer <m.eisenfuehrer@techdivision.com>
  */
