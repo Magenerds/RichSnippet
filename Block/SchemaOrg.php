@@ -10,6 +10,7 @@
 namespace Magenerds\RichSnippet\Block;
 
 use Magenerds\RichSnippet\Helper\Data;
+use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager as EventManager;
@@ -28,11 +29,26 @@ use Magento\Theme\Block\Html\Header\Logo;
  * @file        SchemaOrg.php
  * @copyright   Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @site        https://www.techdivision.com/
+ * @author      Simon Sippert <s.sippert@techdivision.com>
  * @author      Philipp Steinkopff <p.steinkopff@techdivision.com>
  * @author      Belinda Tschampel <b.tschampel@techdivision.com>
  */
-class SchemaOrg extends Template
+class SchemaOrg extends Template // NOSONAR
 {
+    /**
+     * Worst rating
+     *
+     * @var int
+     */
+    const AGGREGATE_RATING_WORST_RATING = 1;
+
+    /**
+     * Best rating
+     *
+     * @var int
+     */
+    const AGGREGATE_RATING_BEST_RATING = 5;
+
     /**
      * @var Registry
      */
@@ -93,7 +109,7 @@ class SchemaOrg extends Template
      * @param $value
      * @return bool
      */
-    public function valueIsSet($value)
+    protected function valueIsSet($value)
     {
         return is_string($value) && strlen(trim($value));
     }
@@ -103,7 +119,7 @@ class SchemaOrg extends Template
      *
      * @return Product
      */
-    public function getProduct()
+    protected function getProduct()
     {
         return $this->coreRegistry->registry('product');
     }
@@ -113,7 +129,7 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getLogo()
+    protected function getLogo()
     {
         $logoUrl = '';
         if ($this->helper->getLogoConfig()) {
@@ -127,7 +143,7 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getDescription()
+    protected function getDescription()
     {
         if ($this->helper->getDescriptionType()) {
             return nl2br($this->getProduct()->getData('description'));
@@ -140,7 +156,7 @@ class SchemaOrg extends Template
      * @return Summary
      * @throws NoSuchEntityException
      */
-    public function getReviewSummary()
+    protected function getReviewSummary()
     {
         $storeId = $this->_storeManager->getStore()->getId();
 
@@ -155,7 +171,7 @@ class SchemaOrg extends Template
      * @return string
      * @throws NoSuchEntityException
      */
-    public function getCurrencyCode()
+    protected function getCurrencyCode()
     {
         /** @noinspection PhpUndefinedMethodInspection */
         return $this->_storeManager->getStore()->getCurrentCurrencyCode();
@@ -166,7 +182,7 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getColor()
+    protected function getColor()
     {
         $colorAttribute = $this->helper->getColorConfig();
 
@@ -178,7 +194,7 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getSku()
+    protected function getSku()
     {
         $skuAttribute = $this->helper->getSkuConfig();
 
@@ -190,7 +206,7 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getProductId()
+    protected function getProductId()
     {
         $productIdAttribute = $this->helper->getProductIdConfig();
 
@@ -202,11 +218,42 @@ class SchemaOrg extends Template
      *
      * @return string
      */
-    public function getBrand()
+    protected function getBrand()
     {
         $brandAttribute = $this->helper->getBrandConfig();
 
         return $this->getAttribute($brandAttribute);
+    }
+
+    /**
+     * Get page
+     *
+     * @return string
+     */
+    protected function getPage()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        return $this->getRequest()->getFullActionName();
+    }
+
+    /**
+     * Retrieve current category model
+     *
+     * @return Category
+     */
+    protected function getCategory()
+    {
+        return $this->coreRegistry->registry('current_category');
+    }
+
+    /**
+     * Get category rating
+     *
+     * @return int
+     */
+    protected function getCategoryRating()
+    {
+        return 0;
     }
 
     /**
@@ -251,10 +298,50 @@ class SchemaOrg extends Template
     }
 
     /**
+     * Get schema depending on page
+     *
      * @return array
      * @throws NoSuchEntityException
      */
-    public function getProductSchema()
+    public function getSchema()
+    {
+        if ($this->getPage() === 'catalog_category_view') {
+            return $this->getCategorySchema();
+        } else {
+            return $this->getProductSchema();
+        }
+    }
+
+    /**
+     * Get category schema
+     *
+     * @return array
+     */
+    protected function getCategorySchema()
+    {
+        $category = $this->getCategory();
+
+        return [
+            '@context' => 'http://schema.org',
+            '@type' => 'Offer',
+            'name' => $category->getName(),
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => 0,
+                'reviewCount' => 0,
+                'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
+                'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
+            ],
+        ];
+    }
+
+    /**
+     * Get product schema
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    protected function getProductSchema()
     {
         $productModel = $this->getProduct();
         $product = [];
@@ -265,8 +352,8 @@ class SchemaOrg extends Template
         $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
 
         if ($reviewCount > 0) {
-            $aggregateRating = $this->getProductSchemaData([], 5, 'bestRating');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, 1, 'worstRating');
+            $aggregateRating = $this->getProductSchemaData([], static::AGGREGATE_RATING_BEST_RATING, 'bestRating');
+            $aggregateRating = $this->getProductSchemaData($aggregateRating, static::AGGREGATE_RATING_WORST_RATING, 'worstRating');
             $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
             $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
             if (!empty($aggregateRating)) {
@@ -289,13 +376,13 @@ class SchemaOrg extends Template
         }
 
         /** @noinspection PhpDeprecationInspection */
-        $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($productModel->getName())), 'name');
-        $product = $this->getProductSchemaData($product, $this->stripTags($this->getColor()), 'color');
+        $product = $this->getProductSchemaData($product, $productModel->getName(), 'name');
+        $product = $this->getProductSchemaData($product, $this->getColor(), 'color');
         $product = $this->getProductSchemaData($product, $this->getLogo(), 'logo');
         /** @noinspection PhpDeprecationInspection */
-        $product = $this->getProductSchemaData($product, $this->escapeQuote($this->stripTags($this->getDescription())), 'description');
+        $product = $this->getProductSchemaData($product, $this->getDescription(), 'description');
         $product = $this->getProductSchemaData($product, $this->getSku(), 'sku');
-        $product = $this->getProductSchemaData($product, ($this->getProductId() ? __('Art.nr.:') . $this->stripTags($this->getProductId()) : ''), 'productID');
+        $product = $this->getProductSchemaData($product, ($this->getProductId() ? __('Art.nr.:') . $this->getProductId() : ''), 'productID');
         /** @noinspection PhpUndefinedMethodInspection */
         $product = $this->getProductSchemaData($product, $productModel->getMediaGalleryImages()->getFirstItem()->getUrl(), 'image');
 
@@ -348,11 +435,11 @@ class SchemaOrg extends Template
      * @param $code
      * @return string
      */
-    public function getAttribute($code)
+    protected function getAttribute($code)
     {
         $attributeValue = '';
 
-        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpUndefinedMethodInspection PhpDeprecationInspection */
         $attribute = $this->getProduct()->getResource()->getAttribute($code);
 
         if (!$attribute) {
@@ -367,5 +454,18 @@ class SchemaOrg extends Template
         }
 
         return $attributeValue;
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!$this->getTemplate()) {
+            $this->setTemplate('Magenerds_RichSnippet::head/schema.phtml');
+        }
+        return parent::_toHtml();
     }
 }

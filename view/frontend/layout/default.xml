@@ -9,7 +9,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
-            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\SchemaOrg" name="magenerds.schema.org.organization" template="Magenerds_RichSnippet::meta_head_organization.phtml"/>
+            <block ifconfig="richsnippet/general/enable" class="Magenerds\RichSnippet\Block\SchemaOrg" name="magenerds.schema.org.organization" template="Magenerds_RichSnippet::head/schema_organization.phtml"/>
         </referenceBlock>
     </body>
 </page>

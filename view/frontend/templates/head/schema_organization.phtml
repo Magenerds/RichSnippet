@@ -19,14 +19,8 @@ use Magenerds\RichSnippet\Block\SchemaOrg;
  */
 
 /** @var $block SchemaOrg */
-
-$organizationJson = '';
-$organization = $block->getOrganizationSchema();
-if (!empty($organization)) {
-    $organizationJson = json_encode($organization);
-}
-if (!$block->valueIsSet($organizationJson)) {
+if (!($organization = $block->getOrganizationSchema())) {
     return;
 }
 ?>
-<script type="application/ld+json"><?php echo $organizationJson; ?></script>
+<script type="application/ld+json"><?php echo json_encode($organization); ?></script>

@@ -9,7 +9,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
-            <block ifconfig="richsnippet/open_graph/facebook_enable" class="Magenerds\RichSnippet\Block\FacebookOpenGraph" name="magenerds.facebook.open.graph" template="Magenerds_RichSnippet::facebookopengraph_head.phtml"/>
+            <block ifconfig="richsnippet/open_graph/facebook_enable" class="Magenerds\RichSnippet\Block\FacebookOpenGraph" name="magenerds.facebook.open.graph"/>
         </referenceBlock>
     </body>
 </page>

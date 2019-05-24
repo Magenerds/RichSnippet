@@ -1,4 +1,7 @@
 <?php
+
+/** @noinspection PhpDeprecationInspection */
+
 /**
  * NOTICE OF LICENSE
  *
@@ -24,14 +27,12 @@ $fbAppId = $block->getFacebookAppId();
 /** @noinspection PhpUnhandledExceptionInspection */
 $ogData = $block->getOpenGraphData()
 ?>
-<!--  facebook open graph -->
 <?php if ($fbAppId) : ?>
-    <meta property="fb:app_id" content="<?php echo $fbAppId; ?>"/>
+    <meta property="fb:app_id" content="<?php echo $block->escapeQuote($fbAppId); ?>">
 <?php endif; ?>
 
 <?php foreach ($ogData as $key => $value): ?>
     <?php if (isset($key)): ?>
-        <meta property="og:<?php echo $key ?>" content="<?php echo $value ?>">
+        <meta property="og:<?php echo $block->escapeQuote($key); ?>" content="<?php echo $block->escapeQuote($value); ?>">
     <?php endif; ?>
 <?php endforeach; ?>
-<!--  facebook open graph -->

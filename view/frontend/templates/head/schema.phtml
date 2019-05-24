@@ -21,14 +21,9 @@ use Magenerds\RichSnippet\Block\SchemaOrg;
 
 /** @var $block SchemaOrg */
 
-$productJson = '';
 /** @noinspection PhpUnhandledExceptionInspection */
-$productData = $block->getProductSchema();
-if (!empty($productData)) {
-    $productJson = json_encode($productData);
-}
-if (!$block->valueIsSet($productJson)) {
+if (!($schema = $block->getSchema())) {
     return;
 }
 ?>
-<script type="application/ld+json"><?php echo $productJson; ?></script>
+<script type="application/ld+json"><?php echo json_encode($schema); ?></script>

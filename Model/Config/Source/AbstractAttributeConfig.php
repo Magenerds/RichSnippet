@@ -59,7 +59,7 @@ class AbstractAttributeConfig implements ArrayInterface
         /** @var $attributeCollection Collection */
         $attributeCollection = $this->attributeCollectionFactory->create();
         $attributeCollection->addVisibleFilter()
-            ->setOrder('frontend_label', 'ASC');
+            ->setOrder('frontend_label', Collection::SORT_ORDER_ASC);
 
         if ($filter) {
             $attributeCollection->addFieldToFilter($filter, 1);

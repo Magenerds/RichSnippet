@@ -12,7 +12,7 @@
             <label>Magenerds</label>
         </tab>
         <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>RichSnippet</label>
+            <label>Rich Snippet</label>
             <tab>Magenerds</tab>
             <resource>Magenerds_RichSnippet::config_richsnippet</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">

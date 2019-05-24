@@ -143,11 +143,10 @@ class FacebookOpenGraph extends Template
      */
     protected function getCategoryTitle()
     {
-        $title = $this->getCategory()->getData('meta_title');
-        if ($title) {
+        if ($title = $this->getCategory()->getData('meta_title')) {
             return $title;
         }
-        return '';
+        return $this->getCategory()->getName() ?: '';
     }
 
     /**
@@ -272,39 +271,62 @@ class FacebookOpenGraph extends Template
 
             if ($productImage) {
                 $imageUrl = $productImage->getImageUrl();
-                $ogData['image:secure_url'] = $this->escapeUrl($imageUrl);
-                $ogData['image:type'] = $this->getTypeExension($imageUrl);
-                $ogData['image:width'] = $productImage->getWidth();
-                $ogData['image:height'] = $productImage->getHeight();
+                $ogData = array_merge($ogData, [
+                    'image:secure_url' => $imageUrl,
+                    'image:type' => $this->getTypeExension($imageUrl),
+                    'image:width' => $productImage->getWidth(),
+                    'image:height' => $productImage->getHeight(),
+                ]);
             }
         } /** @noinspection PhpUndefinedMethodInspection */
         elseif ($this->getRequest()->getFullActionName() === 'catalog_category_view') {
-            $categoryImage = $this->getCategoryImage();
             $categoryImageUrl = $this->getCategoryImageUrl();
             $categoryImageSize = $this->getCategoryImageSize();
 
-            $ogData['type'] = 'product.group';
-            $ogData['title'] = $this->escapeHtml($this->getCategoryTitle());
-            $ogData['description'] = $this->escapeHtml($this->getCategoryDescription());
-            $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
+            $ogData = array_merge($ogData, [
+                'type' => 'product.group',
+                'title' => $this->getCategoryTitle(),
+                'description' => $this->getCategoryDescription(),
+                'url' => $this->getCurrentUrl(),
+            ]);
 
-            if ($categoryImage) {
-                $ogData['image'] = $this->escapeUrl($categoryImageUrl);
-                $ogData['image:secure_url'] = $this->escapeUrl($categoryImageUrl);
-                $ogData['image:type'] = $this->getTypeExension($categoryImageUrl);
+            if ($categoryImageUrl) {
+                $ogData = array_merge($ogData, [
+                    'image' => $categoryImageUrl,
+                    'image:secure_url' => $categoryImageUrl,
+                    'image:type' => $this->getTypeExension($categoryImageUrl),
+                ]);
+
                 if ($categoryImageSize) {
-                    $ogData['image:width'] = $categoryImageSize[0];
-                    $ogData['image:height'] = $categoryImageSize[1];
+                    $ogData = array_merge($ogData, [
+                        'image:width' => $categoryImageSize[0],
+                        'image:height' => $categoryImageSize[0],
+                    ]);
                 }
             }
         } /** @noinspection PhpUndefinedMethodInspection */
         elseif ($this->getRequest()->getFullActionName() === 'cms_page_view') {
-            $ogData['type'] = 'article';
-            $ogData['title'] = $this->escapeHtml($this->getCmsPageTitle());
-            $ogData['description'] = $this->getCmsDescription();
-            $ogData['url'] = $this->escapeUrl($this->getCurrentUrl());
+            $ogData = array_merge($ogData, [
+                'type' => 'article',
+                'title' => $this->getCmsPageTitle(),
+                'description' => $this->getCmsDescription(),
+                'url' => $this->getCurrentUrl(),
+            ]);
         }
 
         return $ogData;
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!$this->getTemplate()) {
+            $this->setTemplate('Magenerds_RichSnippet::head/fb_open_graph.phtml');
+        }
+        return parent::_toHtml();
     }
 }
