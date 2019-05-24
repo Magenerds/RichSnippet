@@ -33,11 +33,11 @@ class Description implements ArrayInterface
         return [
             [
                 'value' => 0,
-                'label' => __('Short Description')
+                'label' => __('Short Description'),
             ],
             [
                 'value' => 1,
-                'label' => __('Long Description')
+                'label' => __('Long Description'),
             ]
         ];
     }

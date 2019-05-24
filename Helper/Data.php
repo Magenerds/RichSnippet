@@ -110,7 +110,29 @@ class Data extends AbstractHelper
      */
     public function getFacebookAppIdConfig($storeId = 0)
     {
-        return $this->scopeConfig->getValue('richsnippet/open_graph/facebook_app_id', ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->getConfig($storeId, 'facebook_app_id', 'open_graph');
+    }
+
+    /**
+     * Check if schema is enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getSchemaEnable($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable', 'schema');
+    }
+
+    /**
+     * Check if schema aggregated ratings are enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getSchemaEnableCategoryRatings($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable_category_ratings', 'schema');
     }
 
     /**

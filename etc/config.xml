@@ -37,6 +37,10 @@
                 <facebook_enable>0</facebook_enable>
                 <facebook_app_id/>
             </open_graph>
+            <schema>
+                <enable>1</enable>
+                <enable_category_ratings>1</enable_category_ratings>
+            </schema>
         </richsnippet>
     </default>
 </config>

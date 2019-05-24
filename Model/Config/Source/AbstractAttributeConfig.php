@@ -53,7 +53,7 @@ class AbstractAttributeConfig implements ArrayInterface
         $options = [];
         $options[] = [
             'value' => 0,
-            'label' => __('Select to activate')
+            'label' => __('Select to activate'),
         ];
 
         /** @var $attributeCollection Collection */

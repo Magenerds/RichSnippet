@@ -368,21 +368,28 @@ class SchemaOrg extends Template // NOSONAR
      */
     protected function getCategorySchema()
     {
-        $category = $this->getCategory();
-        $rating = $this->getCategoryRating();
-
-        return [
+        // set category schema
+        $schema = [
             '@context' => static::SCHEMA_DOMAIN,
             '@type' => 'Offer',
-            'name' => $category->getName(),
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => $rating[0],
-                'reviewCount' => $rating[1],
-                'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
-                'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
-            ],
+            'name' => $this->getCategory()->getName(),
         ];
+
+        // add ratings
+        if ($this->helper->getSchemaEnableCategoryRatings() && ($rating = $this->getCategoryRating())) {
+            $schema = array_merge($schema, [
+                'aggregateRating' => [
+                    '@type' => 'AggregateRating',
+                    'ratingValue' => $rating[0],
+                    'reviewCount' => $rating[1],
+                    'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
+                    'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
+                ]
+            ]);
+        }
+
+        // return schema
+        return $schema;
     }
 
     /**
@@ -513,6 +520,9 @@ class SchemaOrg extends Template // NOSONAR
      */
     protected function _toHtml()
     {
+        if (!$this->helper->getSchemaEnable()) {
+            return '';
+        }
         if (!$this->getTemplate()) {
             $this->setTemplate('Magenerds_RichSnippet::head/schema.phtml');
         }
