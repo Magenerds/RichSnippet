@@ -4,7 +4,7 @@
  *
  * This source file is subject to the Open Software License (OSL 3.0)
  * that is available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/osl-3.0.php
  */
 
 namespace Magenerds\RichSnippet\Block;
@@ -12,6 +12,7 @@ namespace Magenerds\RichSnippet\Block;
 use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager as EventManager;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -35,6 +36,13 @@ use Magento\Theme\Block\Html\Header\Logo;
  */
 class SchemaOrg extends Template // NOSONAR
 {
+    /**
+     * Schema domain
+     *
+     * @var string
+     */
+    const SCHEMA_DOMAIN = 'https://schema.org/';
+
     /**
      * Worst rating
      *
@@ -75,6 +83,11 @@ class SchemaOrg extends Template // NOSONAR
     protected $eventManager;
 
     /**
+     * @var ResourceConnection
+     */
+    protected $connection;
+
+    /**
      * SchemaOrg constructor.
      *
      * @param Registry $registry
@@ -83,6 +96,7 @@ class SchemaOrg extends Template // NOSONAR
      * @param Logo $logo
      * @param Context $context
      * @param EventManager $eventManager
+     * @param ResourceConnection $connection
      * @param array $data
      */
     public function __construct(
@@ -92,6 +106,7 @@ class SchemaOrg extends Template // NOSONAR
         Logo $logo,
         Context $context,
         EventManager $eventManager,
+        ResourceConnection $connection,
         $data = []
     )
     {
@@ -100,6 +115,7 @@ class SchemaOrg extends Template // NOSONAR
         $this->helper = $helper;
         $this->logo = $logo;
         $this->eventManager = $eventManager;
+        $this->connection = $connection;
         parent::__construct($context, $data);
     }
 
@@ -249,11 +265,44 @@ class SchemaOrg extends Template // NOSONAR
     /**
      * Get category rating
      *
-     * @return int
+     * @return array
      */
     protected function getCategoryRating()
     {
-        return 0;
+        // set default return value
+        $defaultReturn = [0, 0];
+
+        // get products
+        if (!($productIds = $this->getCategory()->getProductCollection()->getAllIds())) {
+            return $defaultReturn;
+        }
+
+        // get rating data
+        $select = $this->connection->getConnection()->select()->from(
+            'rating_option_vote_aggregated',
+            [
+                'COUNT(vote_count) as item_count',
+                'SUM(vote_count) as vote_count',
+                'SUM(vote_value_sum) as vote_sum',
+                'SUM(percent_approved) as percent_approved'
+            ]
+        )->where('entity_pk_value IN (?)', $productIds);
+
+        // get data
+        $data = $this->connection->getConnection()->fetchRow($select);
+
+        // calculate average
+        if (!$data || !$data['item_count'] || !isset($data['item_count'])) {
+            return $defaultReturn;
+        }
+
+        // return average rating and count
+        $count = $data['vote_count'] * ($data['percent_approved'] / $data['item_count'] / 100);
+        $sum = $data['vote_sum'] * ($data['percent_approved'] / $data['item_count'] / 100);
+        $avg = $count ? ($sum / $count) : 0;
+        $avg = max($avg, static::AGGREGATE_RATING_WORST_RATING);
+        $avg = min($avg, static::AGGREGATE_RATING_BEST_RATING);
+        return [round($avg, 2), floor($count)];
     }
 
     /**
@@ -288,7 +337,7 @@ class SchemaOrg extends Template // NOSONAR
         $organization = $this->getOrganizationSchemaData($organization, 'company_logo', 'logo');
 
         if (!empty($organization)) {
-            $organization['@context'] = 'https://schema.org/';
+            $organization['@context'] = static::SCHEMA_DOMAIN;
             $organization['@type'] = 'Organization';
         }
 
@@ -320,15 +369,16 @@ class SchemaOrg extends Template // NOSONAR
     protected function getCategorySchema()
     {
         $category = $this->getCategory();
+        $rating = $this->getCategoryRating();
 
         return [
-            '@context' => 'http://schema.org',
+            '@context' => static::SCHEMA_DOMAIN,
             '@type' => 'Offer',
             'name' => $category->getName(),
             'aggregateRating' => [
                 '@type' => 'AggregateRating',
-                'ratingValue' => 0,
-                'reviewCount' => 0,
+                'ratingValue' => $rating[0],
+                'reviewCount' => $rating[1],
                 'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
                 'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
             ],
@@ -364,7 +414,7 @@ class SchemaOrg extends Template // NOSONAR
 
         $offers['@type'] = 'Offer';
         $offers = $this->getProductSchemaData($offers, $this->getCurrencyCode(), 'priceCurrency');
-        $offers = $this->getProductSchemaData($offers, $productModel->isAvailable() ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", 'availability');
+        $offers = $this->getProductSchemaData($offers, static::SCHEMA_DOMAIN . ($productModel->isAvailable() ? 'InStock' : 'OutOfStock'), 'availability');
         $offers = $this->getProductSchemaData($offers, $productModel->getFinalPrice(), 'price');
         $offers = $this->getProductSchemaData($offers, $productModel->getUrlModel()->getUrl($productModel), 'url');
         $product['offers'] = $offers;
@@ -387,7 +437,7 @@ class SchemaOrg extends Template // NOSONAR
         $product = $this->getProductSchemaData($product, $productModel->getMediaGalleryImages()->getFirstItem()->getUrl(), 'image');
 
         if (!empty($product)) {
-            $product['@context'] = 'https://schema.org/';
+            $product['@context'] = static::SCHEMA_DOMAIN;
             $product['@type'] = 'Product';
         }
 
