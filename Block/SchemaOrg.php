@@ -1,4 +1,7 @@
 <?php
+
+/** @noinspection PhpUndefinedClassInspection */
+
 /**
  * NOTICE OF LICENSE
  *
@@ -13,6 +16,7 @@ use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Data\Collection;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager as EventManager;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -21,6 +25,8 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Review\Model\Review\Summary;
 use Magento\Review\Model\Review\SummaryFactory;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Theme\Block\Html\Header\Logo;
 
 /**
@@ -169,16 +175,25 @@ class SchemaOrg extends Template // NOSONAR
     }
 
     /**
+     * Get store
+     *
+     * @return StoreInterface
+     * @throws NoSuchEntityException
+     */
+    protected function getStore()
+    {
+        return $this->_storeManager->getStore();
+    }
+
+    /**
      * @return Summary
      * @throws NoSuchEntityException
      */
     protected function getReviewSummary()
     {
-        $storeId = $this->_storeManager->getStore()->getId();
-
-        /** @var $reviewSummary Summary */
+        /** @var Summary $reviewSummary */
         $reviewSummary = $this->reviewSummaryFactory->create();
-        $reviewSummary->setData('store_id', $storeId);
+        $reviewSummary->setData('store_id', $this->getStore()->getId());
         /** @noinspection PhpDeprecationInspection */
         return $reviewSummary->load($this->getProduct()->getId());
     }
@@ -190,7 +205,7 @@ class SchemaOrg extends Template // NOSONAR
     protected function getCurrencyCode()
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        return $this->_storeManager->getStore()->getCurrentCurrencyCode();
+        return $this->getStore()->getCurrentCurrencyCode();
     }
 
     /**
@@ -266,6 +281,7 @@ class SchemaOrg extends Template // NOSONAR
      * Get category rating
      *
      * @return array
+     * @throws NoSuchEntityException
      */
     protected function getCategoryRating()
     {
@@ -278,15 +294,25 @@ class SchemaOrg extends Template // NOSONAR
         }
 
         // get rating data
-        $select = $this->connection->getConnection()->select()->from(
-            'rating_option_vote_aggregated',
-            [
+        $select = $this->connection->getConnection()->select()
+            ->from('rating_option_vote_aggregated')
+            ->where('entity_pk_value IN (?)', $productIds)
+            ->where('store_id IN (?)', [Store::DEFAULT_STORE_ID, $this->getStore()->getId()])
+            ->group('entity_pk_value')
+            ->order('store_id ' . Collection::SORT_ORDER_DESC);
+
+        // select from sub-select
+        $select = join(' ', [
+            'SELECT',
+            join(', ', [
                 'COUNT(vote_count) as item_count',
                 'SUM(vote_count) as vote_count',
                 'SUM(vote_value_sum) as vote_sum',
                 'SUM(percent_approved) as percent_approved'
-            ]
-        )->where('entity_pk_value IN (?)', $productIds);
+            ]),
+            'FROM',
+            '(' . (string)$select . ') main'
+        ]);
 
         // get data
         $data = $this->connection->getConnection()->fetchRow($select);
@@ -365,6 +391,7 @@ class SchemaOrg extends Template // NOSONAR
      * Get category schema
      *
      * @return array
+     * @throws NoSuchEntityException
      */
     protected function getCategorySchema()
     {
