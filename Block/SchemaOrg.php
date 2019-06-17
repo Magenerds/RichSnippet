@@ -449,7 +449,7 @@ class SchemaOrg extends Template // NOSONAR
         $offers['@type'] = 'Offer';
         $offers = $this->getProductSchemaData($offers, $this->getCurrencyCode(), 'priceCurrency');
         $offers = $this->getProductSchemaData($offers, static::SCHEMA_DOMAIN . ($productModel->isAvailable() ? 'InStock' : 'OutOfStock'), 'availability');
-        $offers = $this->getProductSchemaData($offers, $productModel->getFinalPrice(), 'price');
+        $offers = $this->getProductSchemaData($offers, round($productModel->getPriceInfo()->getPrice('final_price')->getAmount()->getValue(), 2), 'price');
         $offers = $this->getProductSchemaData($offers, $productModel->getUrlModel()->getUrl($productModel), 'url');
         $product['offers'] = $offers;
 
