@@ -1,79 +1,59 @@
 <?xml version="1.0"?>
 <!--
-/**
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- */
-/**
- * @category   Magenerds
- * @package    Magenerds_RichSnippet
- * @subpackage etc
- * @author     Belinda Tschampel <b.tschampel@techdivision.com>
- * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
- */
- -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+ ~ NOTICE OF LICENSE
+ ~
+ ~ This source file is subject to the Open Software License (OSL 3.0)
+ ~ that is available through the world-wide-web at this URL:
+ ~ https://opensource.org/licenses/osl-3.0.php
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="magenerds" translate="label" sortOrder="1000">
+        <tab id="Magenerds" translate="label" sortOrder="1000">
             <label>Magenerds</label>
         </tab>
-        <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                 showInStore="1">
-            <label>RichSnippet</label>
-            <tab>magenerds</tab>
+        <section id="richsnippet" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Rich Snippet</label>
+            <tab>Magenerds</tab>
             <resource>Magenerds_RichSnippet::config_richsnippet</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                   showInStore="1">
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="logo" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="logo" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Transfer Shop Logo</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="product_properties" translate="label" type="text" sortOrder="20" showInDefault="1"
-                   showInWebsite="1" showInStore="1">
+            <group id="product_properties" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Product Information Properties</label>
-                <field id="color" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="color" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Attribute for Color Property</label>
                     <comment>Only attributes which are used in product listing are shown</comment>
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
-                <field id="description" translate="label" type="select" sortOrder="20" showInDefault="1"
-                       showInWebsite="1" showInStore="1">
+                <field id="description" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Content for Description Property</label>
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\Description</source_model>
                 </field>
-                <field id="sku" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="sku" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Attribute for SKU Property</label>
                     <comment>Only attributes which are used in product listing are shown</comment>
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
-                <field id="product_id" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="product_id" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Attribute for ProductID Property</label>
                     <comment>Only attributes which are used in product listing are shown</comment>
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
-                <field id="brand" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="brand" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Attribute for Brand Property</label>
                     <comment>Only attributes which are used in product listing are shown</comment>
                     <source_model>Magenerds\RichSnippet\Model\Config\Source\AbstractAttributeConfig</source_model>
                 </field>
             </group>
+            <!-- todo: get settings from system configuration?! -->
             <group id="organization_properties" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Organization Properties</label>
                 <field id="company_name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -83,10 +63,10 @@
                     <label>Street</label>
                 </field>
                 <field id="company_postalcode" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Postalcode</label>
+                    <label>ZIP Code</label>
                 </field>
                 <field id="company_location" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Location/City</label>
+                    <label>Location / City</label>
                 </field>
                 <field id="company_fax" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Fax</label>
@@ -97,31 +77,39 @@
                 <field id="company_email" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Email</label>
                 </field>
-                <field id="company_founding_date" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="company_url" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website</label>
+                </field>
+                <field id="company_founding_date" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Founding Date</label>
                 </field>
-                <field id="company_brand" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="company_brand" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Brand</label>
-                </field>
-                <field id="company_url" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Website</label>
                 </field>
                 <field id="company_logo" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Logo</label>
                     <comment>Absolute URL to company logo</comment>
                 </field>
             </group>
-            <group id="open_graph" translate="label" type="text" sortOrder="30" showInDefault="1"
-                   showInWebsite="1" showInStore="1">
+            <group id="open_graph" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Facebook Open Graph</label>
-                <field id="facebook_enable" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="facebook_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Facebook OpenGraph</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="facebook_app_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                <field id="facebook_app_id" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Facebook App ID</label>
+                </field>
+            </group>
+            <group id="schema" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Schema.org</label>
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="enable_category_ratings" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Aggregated Category Ratings</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>

@@ -1,26 +1,20 @@
 {
-  "name": "magenerds/richsnippet",
-  "description": "This module provides rich snippet functionality",
-  "require": {
-    "magento/framework": "101.0.*|102.0.*",
-    "magenerds/dashboard": "^1.0"
-  },
-  "type": "magento2-module",
-  "repositories": {
-    "magento": {
-      "type": "composer",
-      "url": "https://repo.magento.com/"
-    }
-  },
-  "license": [
-    "OSL-3.0"
-  ],
-  "autoload": {
-    "files": [
-      "registration.php"
+    "name": "magenerds/richsnippet",
+    "description": "This module provides rich snippet functionality",
+    "require": {
+        "magento/framework": "101.0.*|102.0.*",
+        "magenerds/dashboard": "^1.0"
+    },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0"
     ],
-    "psr-4": {
-      "Magenerds\\RichSnippet\\": ""
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magenerds\\RichSnippet\\": ""
+        }
     }
-  }
 }

@@ -4,7 +4,7 @@
  *
  * This source file is subject to the Open Software License (OSL 3.0)
  * that is available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/osl-3.0.php
  */
 
 namespace Magenerds\RichSnippet\Helper;
@@ -14,10 +14,10 @@ use Magento\Store\Model\ScopeInterface;
 
 /**
  * @category   Magenerds
- * @package    Magenerds_RichSnippet
- * @subpackage Block
- * @copyright  Copyright (c) 2017 TechDivision GmbH (http://www.techdivision.com)
- * @link       http://www.techdivision.com/
+ * @package    Magenerds\RichSnippet\Helper
+ * @subpackage Helper
+ * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
+ * @link       https://www.techdivision.com/
  * @author     Belinda Tschampel <b.tschampel@techdivision.com>
  * @author     Philipp Steinkopff <p.steinkopff@techdivision.com>
  */
@@ -92,10 +92,12 @@ class Data extends AbstractHelper
     /**
      * Load any config value
      *
-     * @param int $storeId int
-     * @return string
+     * @param string $name
+     * @param string $second
+     * @param int $storeId
+     * @return mixed
      */
-    public function getDynamicConfigValue($name, $second, $storeId = 0)
+    public function getDynamicConfigValue($name, $second = 'product_properties', $storeId = 0)
     {
         return $this->getConfig($storeId, $name, $second);
     }
@@ -108,22 +110,45 @@ class Data extends AbstractHelper
      */
     public function getFacebookAppIdConfig($storeId = 0)
     {
-        return $this->scopeConfig->getValue('richsnippet/open_graph/facebook_app_id', ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->getConfig($storeId, 'facebook_app_id', 'open_graph');
+    }
+
+    /**
+     * Check if schema is enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getSchemaEnable($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable', 'schema');
+    }
+
+    /**
+     * Check if schema aggregated ratings are enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getSchemaEnableCategoryRatings($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable_category_ratings', 'schema');
     }
 
     /**
      * Returns system configuration
      *
-     * @param $storeId int store id
-     * @param $name string configname
+     * @param int $storeId int store id
+     * @param string $name string config name
+     * @param string $second
      * @return mixed
      */
     protected function getConfig($storeId, $name, $second = 'product_properties')
     {
         if ($storeId) {
-            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
+            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
         } else {
-            return $this->scopeConfig->getValue('richsnippet/'.$second.'/' . $name);
+            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name);
         }
     }
 }

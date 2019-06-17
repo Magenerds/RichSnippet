@@ -7,15 +7,20 @@
  * https://opensource.org/licenses/osl-3.0.php
  */
 
-use Magento\Framework\Component\ComponentRegistrar;
+use Magenerds\RichSnippet\Block\SchemaOrg;
 
 /**
  * @category   Magenerds
  * @package    Magenerds_RichSnippet
- * @subpackage Module
+ * @subpackage view
  * @copyright  Copyright (c) 2019 TechDivision GmbH (https://www.techdivision.com)
  * @link       https://www.techdivision.com/
- * @author     Belinda Tschampel <b.tschampel@techdivision.com>
- * @author     Philipp Steinkopff <p.steinkopff@techdivision.com>
+ * @author     Martin Eisenführer <m.eisenfuehrer@techdivision.com>
  */
-ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Magenerds_RichSnippet', __DIR__);
+
+/** @var $block SchemaOrg */
+if (!($organization = $block->getOrganizationSchema())) {
+    return;
+}
+?>
+<script type="application/ld+json"><?php echo json_encode($organization); ?></script>
