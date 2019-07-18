@@ -7,7 +7,7 @@
  * https://opensource.org/licenses/osl-3.0.php
  */
 
-namespace Magenerds\Richsnippet\Observer;
+namespace Magenerds\RichSnippet\Observer;
 
 use Magenerds\RichSnippet\Block\SchemaOrg;
 use Magento\Framework\Event\Observer;

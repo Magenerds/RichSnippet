@@ -114,8 +114,7 @@ class SchemaOrg extends Template // NOSONAR
         EventManager $eventManager,
         ResourceConnection $connection,
         $data = []
-    )
-    {
+    ) {
         $this->coreRegistry = $registry;
         $this->reviewSummaryFactory = $reviewSummaryFactory;
         $this->helper = $helper;
@@ -388,6 +387,21 @@ class SchemaOrg extends Template // NOSONAR
     }
 
     /**
+     * Get schema depending on page
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    public function getSchemaBreadcrumb()
+    {
+        if ($this->getPage() === 'catalog_category_view') {
+            return $this->getCategorySchemaBreadcrumb(false);
+        } else {
+            return $this->getCategorySchemaBreadcrumb(true);
+        }
+    }
+
+    /**
      * Get category schema
      *
      * @return array
@@ -413,6 +427,47 @@ class SchemaOrg extends Template // NOSONAR
                     'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
                 ]
             ]);
+        }
+
+        // return schema
+        return $schema;
+    }
+
+    /**
+     * Get category schema
+     *
+     * @param bool $productPage
+     * @return array
+     */
+    protected function getCategorySchemaBreadcrumb($productPage)
+    {
+        // set category schema
+        $schema = [
+            '@context' => static::SCHEMA_DOMAIN,
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [],
+        ];
+
+        // add ratings
+        if (true || $this->helper->getSchemaEnableCategoryRatings()) {
+            $category = $this->getCategoryForBreadcrumb($productPage);
+            $crumbs = $this->getBreadcrumbPath($category);
+            if (isset($crumbs['category' . $this->getCategory()->getId()])) {
+                $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getCategory()->getUrl();
+            }
+            if (isset($crumbs['product'])) {
+                unset($crumbs['product']);
+            }
+            $schemaCrumb = [];
+            foreach ($crumbs as $crumb) {
+                $schemaCrumb[] = [
+                    '@type' => 'ListItem',
+                    'position' => (count($schemaCrumb) + 1),
+                    'name' => $crumb['label'],
+                    'item' => $crumb['link'],
+                ];
+            }
+            $schema['itemListElement'] = $schemaCrumb;
         }
 
         // return schema
@@ -555,4 +610,54 @@ class SchemaOrg extends Template // NOSONAR
         }
         return parent::_toHtml();
     }
+
+    /**
+     * Return current category path or get it from current category
+     *
+     * Creating array of categories|product paths for breadcrumbs
+     *
+     * @param Category $category
+     * @return array
+     */
+    public function getBreadcrumbPath(Category $category)
+    {
+        $path = [];
+        if ($category) {
+            $pathInStore = $category->getPathInStore();
+            $pathIds = array_reverse(explode(',', $pathInStore));
+
+            $categories = $category->getParentCategories();
+
+            // add category path breadcrumb
+            foreach ($pathIds as $categoryId) {
+                if (isset($categories[$categoryId]) && $categories[$categoryId]->getName()) {
+                    $path['category' . $categoryId] = [
+                        'label' => $categories[$categoryId]->getName(),
+                        'link' => $categories[$categoryId]->getUrl()
+                    ];
+                }
+            }
+        }
+        return $path;
+    }
+
+    /**
+     * @param bool $productPage
+     * @return Category
+     */
+    protected function getCategoryForBreadcrumb($productPage)
+    {
+        $category = $this->getCategory();
+        if ($productPage) {
+            $categoryId = $this->getProduct()->getMetaSeoCategory();
+            if (!empty($categoryId)) {
+                $category = $this->getCategory()->load($categoryId);
+            }
+            if (empty($category)) {
+                $category = $this->getProduct()->getCategory();
+            }
+        }
+        return $category;
+    }
+
 }
