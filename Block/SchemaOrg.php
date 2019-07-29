@@ -457,8 +457,11 @@ class SchemaOrg extends Template // NOSONAR
         ];
 
         // add ratings
-        if (true || $this->helper->getSchemaEnableCategoryRatings()) {
+        if ($this->helper->getSchemaEnableCategoryRatings()) {
             $category = $this->getCategoryForBreadcrumb($productPage);
+            if (!$category) {
+                return [];
+            }
             $crumbs = $this->getBreadcrumbPath($category);
             if (isset($crumbs['category' . $this->getCategory()->getId()])) {
                 $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getFinalUrlFromCategory($this->getCategory());
