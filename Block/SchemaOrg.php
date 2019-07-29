@@ -15,6 +15,7 @@ namespace Magenerds\RichSnippet\Block;
 use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
+use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\DataObject;
@@ -28,6 +29,8 @@ use Magento\Review\Model\Review\SummaryFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Theme\Block\Html\Header\Logo;
+use Magento\UrlRewrite\Model\UrlFinderInterface;
+use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 /**
  * Class SchemaOrg
@@ -92,6 +95,8 @@ class SchemaOrg extends Template // NOSONAR
      * @var ResourceConnection
      */
     protected $connection;
+    /** @var UrlFinderInterface */
+    private $urlFinder;
 
     /**
      * SchemaOrg constructor.
@@ -103,6 +108,7 @@ class SchemaOrg extends Template // NOSONAR
      * @param Context $context
      * @param EventManager $eventManager
      * @param ResourceConnection $connection
+     * @param UrlFinderInterface $urlFinder
      * @param array $data
      */
     public function __construct(
@@ -113,6 +119,7 @@ class SchemaOrg extends Template // NOSONAR
         Context $context,
         EventManager $eventManager,
         ResourceConnection $connection,
+        UrlFinderInterface $urlFinder,
         $data = []
     ) {
         $this->coreRegistry = $registry;
@@ -122,6 +129,7 @@ class SchemaOrg extends Template // NOSONAR
         $this->eventManager = $eventManager;
         $this->connection = $connection;
         parent::__construct($context, $data);
+        $this->urlFinder = $urlFinder;
     }
 
     /**
@@ -453,7 +461,7 @@ class SchemaOrg extends Template // NOSONAR
             $category = $this->getCategoryForBreadcrumb($productPage);
             $crumbs = $this->getBreadcrumbPath($category);
             if (isset($crumbs['category' . $this->getCategory()->getId()])) {
-                $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getCategory()->getUrl();
+                $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getFinalUrlFromCategory($this->getCategory());
             }
             if (isset($crumbs['product'])) {
                 unset($crumbs['product']);
@@ -473,6 +481,35 @@ class SchemaOrg extends Template // NOSONAR
         // return schema
         return $schema;
     }
+
+    /**
+     * Get category url
+     *
+     * @param Category $category
+     * @return string
+     */
+    public function getFinalUrlFromCategory(\Magento\Catalog\Model\Category  $category)
+    {
+        if ($category->hasData('request_path') && $category->getRequestPath() != '') {
+            $category->setData('url', $category->getUrlInstance()->getDirectUrl($category->getRequestPath()));
+            return $category->getData('url');
+        }
+
+        $rewrite = $this->urlFinder->findOneByData([
+            UrlRewrite::ENTITY_ID => $category->getId(),
+            UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
+            UrlRewrite::STORE_ID => $category->getStoreId(),
+            UrlRewrite::REDIRECT_TYPE => 0, // Final URL, no redirect. TD-CHANGE from origin
+        ]);
+        if ($rewrite) {
+            $category->setData('url', $category->getUrlInstance()->getDirectUrl($rewrite->getRequestPath()));
+            return $category->getData('url');
+        }
+
+        $category->setData('url', $category->getCategoryIdUrl());
+        return $category->getData('url');
+    }
+
 
     /**
      * Get product schema
@@ -633,7 +670,7 @@ class SchemaOrg extends Template // NOSONAR
                 if (isset($categories[$categoryId]) && $categories[$categoryId]->getName()) {
                     $path['category' . $categoryId] = [
                         'label' => $categories[$categoryId]->getName(),
-                        'link' => $categories[$categoryId]->getUrl()
+                        'link' => $this->getFinalUrlFromCategory($categories[$categoryId])
                     ];
                 }
             }
