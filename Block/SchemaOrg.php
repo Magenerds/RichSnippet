@@ -293,7 +293,7 @@ class SchemaOrg extends Template // NOSONAR
     protected function getCategoryRating()
     {
         // set default return value
-        $defaultReturn = [0, 0];
+        $defaultReturn = false;
 
         // get products
         if (!($productIds = $this->getCategory()->getProductCollection()->getAllIds())) {
@@ -387,6 +387,10 @@ class SchemaOrg extends Template // NOSONAR
      */
     public function getSchema()
     {
+        // add ratings
+        if (!$this->helper->getSchemaEnable()) {
+            return '';
+        }
         if ($this->getPage() === 'catalog_category_view') {
             return $this->getCategorySchema();
         } else {
@@ -402,6 +406,9 @@ class SchemaOrg extends Template // NOSONAR
      */
     public function getSchemaBreadcrumb()
     {
+        if (!$this->helper->getSchemaEnableBreadcrumb()) {
+            return '';
+        }
         if ($this->getPage() === 'catalog_category_view') {
             return $this->getCategorySchemaBreadcrumb(false);
         } else {
@@ -456,30 +463,27 @@ class SchemaOrg extends Template // NOSONAR
             'itemListElement' => [],
         ];
 
-        // add ratings
-        if ($this->helper->getSchemaEnableCategoryRatings()) {
-            $category = $this->getCategoryForBreadcrumb($productPage);
-            if (!$category) {
-                return [];
-            }
-            $crumbs = $this->getBreadcrumbPath($category);
-            if (isset($crumbs['category' . $this->getCategory()->getId()])) {
-                $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getFinalUrlFromCategory($this->getCategory());
-            }
-            if (isset($crumbs['product'])) {
-                unset($crumbs['product']);
-            }
-            $schemaCrumb = [];
-            foreach ($crumbs as $crumb) {
-                $schemaCrumb[] = [
-                    '@type' => 'ListItem',
-                    'position' => (count($schemaCrumb) + 1),
-                    'name' => $crumb['label'],
-                    'item' => $crumb['link'],
-                ];
-            }
-            $schema['itemListElement'] = $schemaCrumb;
+        $category = $this->getCategoryForBreadcrumb($productPage);
+        if (!$category) {
+            return [];
         }
+        $crumbs = $this->getBreadcrumbPath($category);
+        if (isset($crumbs['category' . $this->getCategory()->getId()])) {
+            $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getFinalUrlFromCategory($this->getCategory());
+        }
+        if (isset($crumbs['product'])) {
+            unset($crumbs['product']);
+        }
+        $schemaCrumb = [];
+        foreach ($crumbs as $crumb) {
+            $schemaCrumb[] = [
+                '@type' => 'ListItem',
+                'position' => (count($schemaCrumb) + 1),
+                'name' => $crumb['label'],
+                'item' => $crumb['link'],
+            ];
+        }
+        $schema['itemListElement'] = $schemaCrumb;
 
         // return schema
         return $schema;
@@ -642,9 +646,6 @@ class SchemaOrg extends Template // NOSONAR
      */
     protected function _toHtml()
     {
-        if (!$this->helper->getSchemaEnable()) {
-            return '';
-        }
         if (!$this->getTemplate()) {
             $this->setTemplate('Magenerds_RichSnippet::head/schema.phtml');
         }
