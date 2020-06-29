@@ -15,7 +15,7 @@
             </general>
             <product_properties>
                 <color>color</color>
-                <description>description</description>
+                <description>1</description>
                 <sku>sku</sku>
                 <product_id>sku</product_id>
                 <brand>manufacturer</brand>
@@ -40,6 +40,7 @@
             <schema>
                 <enable>1</enable>
                 <enable_category_ratings>1</enable_category_ratings>
+                <enable_breadcrumb>1</enable_breadcrumb>
             </schema>
         </richsnippet>
     </default>

@@ -136,6 +136,17 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Check if schema aggregated ratings are enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getSchemaEnableBreadcrumb($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable_breadcrumb', 'schema');
+    }
+
+    /**
      * Returns system configuration
      *
      * @param int $storeId int store id
@@ -145,10 +156,9 @@ class Data extends AbstractHelper
      */
     protected function getConfig($storeId, $name, $second = 'product_properties')
     {
-        if ($storeId) {
-            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name, ScopeInterface::SCOPE_STORE, $storeId);
-        } else {
-            return $this->scopeConfig->getValue('richsnippet/' . $second . '/' . $name);
-        }
+        return $this->scopeConfig->getValue(
+            'richsnippet/' . $second . '/' . $name, ScopeInterface::SCOPE_STORE,
+            !empty($storeId) ? $storeId : null
+        );
     }
 }
