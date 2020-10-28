@@ -148,7 +148,7 @@ class SchemaOrg extends Template // NOSONAR
      *
      * @return Product
      */
-    protected function getProduct()
+    public function getProduct()
     {
         return $this->coreRegistry->registry('product');
     }
