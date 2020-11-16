@@ -277,7 +277,7 @@ class SchemaOrg extends Template // NOSONAR
     /**
      * Retrieve current category model
      *
-     * @return Category
+     * @return Category|null
      */
     protected function getCategory()
     {
@@ -287,13 +287,17 @@ class SchemaOrg extends Template // NOSONAR
     /**
      * Get category rating
      *
-     * @return array
+     * @return array|bool
      * @throws NoSuchEntityException
      */
     protected function getCategoryRating()
     {
         // set default return value
         $defaultReturn = false;
+
+        if ($this->getCategory() === null) {
+            return $defaultReturn;
+        }
 
         // get products
         if (!($productIds = $this->getCategory()->getProductCollection()->getAllIds())) {
@@ -382,48 +386,46 @@ class SchemaOrg extends Template // NOSONAR
     /**
      * Get schema depending on page
      *
-     * @return array
+     * @return array|bool
      * @throws NoSuchEntityException
      */
     public function getSchema()
     {
         // add ratings
         if (!$this->helper->getSchemaEnable()) {
-            return '';
+            return false;
         }
-        if ($this->getPage() === 'catalog_category_view') {
-            return $this->getCategorySchema();
-        } else {
-            return $this->getProductSchema();
-        }
+        return ($this->getPage() === 'catalog_category_view')
+                ? $schema = $this->getCategorySchema()
+                : $schema = $this->getProductSchema();
     }
 
     /**
      * Get schema depending on page
      *
-     * @return array
+     * @return array|bool
      * @throws NoSuchEntityException
      */
     public function getSchemaBreadcrumb()
     {
         if (!$this->helper->getSchemaEnableBreadcrumb()) {
-            return '';
+            return false;
         }
-        if ($this->getPage() === 'catalog_category_view') {
-            return $this->getCategorySchemaBreadcrumb(false);
-        } else {
-            return $this->getCategorySchemaBreadcrumb(true);
-        }
+        $schema = $this->getCategorySchemaBreadcrumb($this->getPage() !== 'catalog_category_view');
+        return is_array($schema) ? $schema : false;
     }
 
     /**
      * Get category schema
      *
-     * @return array
+     * @return array|bool
      * @throws NoSuchEntityException
      */
     protected function getCategorySchema()
     {
+        if ($this->getCategory() === null) {
+            return false;
+        }
         // set category schema
         $schema = [
             '@context' => static::SCHEMA_DOMAIN,
@@ -452,7 +454,7 @@ class SchemaOrg extends Template // NOSONAR
      * Get category schema
      *
      * @param bool $productPage
-     * @return array
+     * @return array|bool
      */
     protected function getCategorySchemaBreadcrumb($productPage)
     {
@@ -465,7 +467,7 @@ class SchemaOrg extends Template // NOSONAR
 
         $category = $this->getCategoryForBreadcrumb($productPage);
         if (!$category) {
-            return [];
+            return false;
         }
         $crumbs = $this->getBreadcrumbPath($category);
         if (isset($crumbs['category' . $this->getCategory()->getId()])) {
@@ -684,17 +686,17 @@ class SchemaOrg extends Template // NOSONAR
 
     /**
      * @param bool $productPage
-     * @return Category
+     * @return Category|null
      */
     protected function getCategoryForBreadcrumb($productPage)
     {
         $category = $this->getCategory();
         if ($productPage) {
             $categoryId = $this->getProduct()->getMetaSeoCategory();
-            if (!empty($categoryId)) {
-                $category = $this->getCategory()->load($categoryId);
+            if (!empty($categoryId) && $category) {
+                $category = $category->load($categoryId);
             }
-            if (empty($category)) {
+            if ($category === null) {
                 $category = $this->getProduct()->getCategory();
             }
         }
