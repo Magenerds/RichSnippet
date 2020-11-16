@@ -22,8 +22,9 @@ use Magenerds\RichSnippet\Block\SchemaOrg;
 /** @var $block SchemaOrg */
 
 /** @noinspection PhpUnhandledExceptionInspection */
-if (!($schema = $block->getSchema())) {
-    return;
+if (($schema = $block->getSchema())) {
+    echo '<script type="application/ld+json">' . json_encode($schema) . '</script>';
 }
-?>
-<script type="application/ld+json"><?php echo json_encode($schema); ?></script>
+if (($schemaBreadcrumb = $block->getSchemaBreadcrumb())) {
+    echo '<script type="application/ld+json">' . json_encode($schemaBreadcrumb) . '</script>';
+}

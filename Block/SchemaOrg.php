@@ -15,6 +15,7 @@ namespace Magenerds\RichSnippet\Block;
 use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
+use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\DataObject;
@@ -28,6 +29,8 @@ use Magento\Review\Model\Review\SummaryFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Theme\Block\Html\Header\Logo;
+use Magento\UrlRewrite\Model\UrlFinderInterface;
+use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 /**
  * Class SchemaOrg
@@ -92,6 +95,8 @@ class SchemaOrg extends Template // NOSONAR
      * @var ResourceConnection
      */
     protected $connection;
+    /** @var UrlFinderInterface */
+    private $urlFinder;
 
     /**
      * SchemaOrg constructor.
@@ -103,6 +108,7 @@ class SchemaOrg extends Template // NOSONAR
      * @param Context $context
      * @param EventManager $eventManager
      * @param ResourceConnection $connection
+     * @param UrlFinderInterface $urlFinder
      * @param array $data
      */
     public function __construct(
@@ -113,9 +119,9 @@ class SchemaOrg extends Template // NOSONAR
         Context $context,
         EventManager $eventManager,
         ResourceConnection $connection,
+        UrlFinderInterface $urlFinder,
         $data = []
-    )
-    {
+    ) {
         $this->coreRegistry = $registry;
         $this->reviewSummaryFactory = $reviewSummaryFactory;
         $this->helper = $helper;
@@ -123,6 +129,7 @@ class SchemaOrg extends Template // NOSONAR
         $this->eventManager = $eventManager;
         $this->connection = $connection;
         parent::__construct($context, $data);
+        $this->urlFinder = $urlFinder;
     }
 
     /**
@@ -141,7 +148,7 @@ class SchemaOrg extends Template // NOSONAR
      *
      * @return Product
      */
-    protected function getProduct()
+    public function getProduct()
     {
         return $this->coreRegistry->registry('product');
     }
@@ -286,7 +293,7 @@ class SchemaOrg extends Template // NOSONAR
     protected function getCategoryRating()
     {
         // set default return value
-        $defaultReturn = [0, 0];
+        $defaultReturn = false;
 
         // get products
         if (!($productIds = $this->getCategory()->getProductCollection()->getAllIds())) {
@@ -380,10 +387,32 @@ class SchemaOrg extends Template // NOSONAR
      */
     public function getSchema()
     {
+        // add ratings
+        if (!$this->helper->getSchemaEnable()) {
+            return '';
+        }
         if ($this->getPage() === 'catalog_category_view') {
             return $this->getCategorySchema();
         } else {
             return $this->getProductSchema();
+        }
+    }
+
+    /**
+     * Get schema depending on page
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    public function getSchemaBreadcrumb()
+    {
+        if (!$this->helper->getSchemaEnableBreadcrumb()) {
+            return '';
+        }
+        if ($this->getPage() === 'catalog_category_view') {
+            return $this->getCategorySchemaBreadcrumb(false);
+        } else {
+            return $this->getCategorySchemaBreadcrumb(true);
         }
     }
 
@@ -418,6 +447,76 @@ class SchemaOrg extends Template // NOSONAR
         // return schema
         return $schema;
     }
+
+    /**
+     * Get category schema
+     *
+     * @param bool $productPage
+     * @return array
+     */
+    protected function getCategorySchemaBreadcrumb($productPage)
+    {
+        // set category schema
+        $schema = [
+            '@context' => static::SCHEMA_DOMAIN,
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [],
+        ];
+
+        $category = $this->getCategoryForBreadcrumb($productPage);
+        if (!$category) {
+            return [];
+        }
+        $crumbs = $this->getBreadcrumbPath($category);
+        if (isset($crumbs['category' . $this->getCategory()->getId()])) {
+            $crumbs['category' . $this->getCategory()->getId()]['link'] = $this->getFinalUrlFromCategory($this->getCategory());
+        }
+        if (isset($crumbs['product'])) {
+            unset($crumbs['product']);
+        }
+        $schemaCrumb = [];
+        foreach ($crumbs as $crumb) {
+            $schemaCrumb[] = [
+                '@type' => 'ListItem',
+                'position' => (count($schemaCrumb) + 1),
+                'name' => $crumb['label'],
+                'item' => $crumb['link'],
+            ];
+        }
+        $schema['itemListElement'] = $schemaCrumb;
+
+        // return schema
+        return $schema;
+    }
+
+    /**
+     * Get category url
+     *
+     * @param Category $category
+     * @return string
+     */
+    public function getFinalUrlFromCategory(\Magento\Catalog\Model\Category  $category)
+    {
+        if ($category->hasData('request_path') && $category->getRequestPath() != '') {
+            $category->setData('url', $category->getUrlInstance()->getDirectUrl($category->getRequestPath()));
+            return $category->getData('url');
+        }
+
+        $rewrite = $this->urlFinder->findOneByData([
+            UrlRewrite::ENTITY_ID => $category->getId(),
+            UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
+            UrlRewrite::STORE_ID => $category->getStoreId(),
+            UrlRewrite::REDIRECT_TYPE => 0, // Final URL, no redirect. TD-CHANGE from origin
+        ]);
+        if ($rewrite) {
+            $category->setData('url', $category->getUrlInstance()->getDirectUrl($rewrite->getRequestPath()));
+            return $category->getData('url');
+        }
+
+        $category->setData('url', $category->getCategoryIdUrl());
+        return $category->getData('url');
+    }
+
 
     /**
      * Get product schema
@@ -547,12 +646,59 @@ class SchemaOrg extends Template // NOSONAR
      */
     protected function _toHtml()
     {
-        if (!$this->helper->getSchemaEnable()) {
-            return '';
-        }
         if (!$this->getTemplate()) {
             $this->setTemplate('Magenerds_RichSnippet::head/schema.phtml');
         }
         return parent::_toHtml();
     }
+
+    /**
+     * Return current category path or get it from current category
+     *
+     * Creating array of categories|product paths for breadcrumbs
+     *
+     * @param Category $category
+     * @return array
+     */
+    public function getBreadcrumbPath(Category $category)
+    {
+        $path = [];
+        if ($category) {
+            $pathInStore = $category->getPathInStore();
+            $pathIds = array_reverse(explode(',', $pathInStore));
+
+            $categories = $category->getParentCategories();
+
+            // add category path breadcrumb
+            foreach ($pathIds as $categoryId) {
+                if (isset($categories[$categoryId]) && $categories[$categoryId]->getName()) {
+                    $path['category' . $categoryId] = [
+                        'label' => $categories[$categoryId]->getName(),
+                        'link' => $this->getFinalUrlFromCategory($categories[$categoryId])
+                    ];
+                }
+            }
+        }
+        return $path;
+    }
+
+    /**
+     * @param bool $productPage
+     * @return Category
+     */
+    protected function getCategoryForBreadcrumb($productPage)
+    {
+        $category = $this->getCategory();
+        if ($productPage) {
+            $categoryId = $this->getProduct()->getMetaSeoCategory();
+            if (!empty($categoryId)) {
+                $category = $this->getCategory()->load($categoryId);
+            }
+            if (empty($category)) {
+                $category = $this->getProduct()->getCategory();
+            }
+        }
+        return $category;
+    }
+
 }

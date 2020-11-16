@@ -2,7 +2,7 @@
     "name": "magenerds/richsnippet",
     "description": "This module provides rich snippet functionality",
     "require": {
-        "magento/framework": "101.0.*|102.0.*",
+        "magento/framework": "102.0.*|103.0.*",
         "magenerds/dashboard": "^1.0"
     },
     "type": "magento2-module",

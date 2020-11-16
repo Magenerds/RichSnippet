@@ -7,7 +7,7 @@
  * https://opensource.org/licenses/osl-3.0.php
  */
 
-namespace Magenerds\Richsnippet\Model\Config\Source;
+namespace Magenerds\RichSnippet\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 
