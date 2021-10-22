@@ -141,6 +141,17 @@ class Data extends AbstractHelper
      * @param int $storeId
      * @return bool
      */
+    public function getSchemaEnableProductRatings($storeId = 0)
+    {
+        return (bool)$this->getConfig($storeId, 'enable_product_ratings', 'schema');
+    }
+
+    /**
+     * Check if schema aggregated ratings are enabled
+     *
+     * @param int $storeId
+     * @return bool
+     */
     public function getSchemaEnableBreadcrumb($storeId = 0)
     {
         return (bool)$this->getConfig($storeId, 'enable_breadcrumb', 'schema');

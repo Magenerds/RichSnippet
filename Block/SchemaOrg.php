@@ -532,18 +532,20 @@ class SchemaOrg extends Template // NOSONAR
         $product = [];
         $offers = [];
 
-        $summaryModel = $this->getReviewSummary();
-        $reviewCount = $summaryModel->getReviewsCount();
-        $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
+        if ($this->helper->getSchemaEnableProductRatings()) {
+            $summaryModel = $this->getReviewSummary();
+            $reviewCount = $summaryModel->getReviewsCount();
+            $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
 
-        if ($reviewCount > 0) {
-            $aggregateRating = $this->getProductSchemaData([], static::AGGREGATE_RATING_BEST_RATING, 'bestRating');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, static::AGGREGATE_RATING_WORST_RATING, 'worstRating');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
-            if (!empty($aggregateRating)) {
-                $aggregateRating['@type'] = 'AggregateRating';
-                $product['aggregateRating'] = $aggregateRating;
+            if ($reviewCount > 0) {
+                $aggregateRating = $this->getProductSchemaData([], static::AGGREGATE_RATING_BEST_RATING, 'bestRating');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, static::AGGREGATE_RATING_WORST_RATING, 'worstRating');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
+                if (!empty($aggregateRating)) {
+                    $aggregateRating['@type'] = 'AggregateRating';
+                    $product['aggregateRating'] = $aggregateRating;
+                }
             }
         }
 

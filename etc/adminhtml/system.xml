@@ -111,6 +111,10 @@
                     <label>Enable Aggregated Category Ratings</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="enable_product_ratings" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Aggregated Product Ratings</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="enable_breadcrumb" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable Catalog/Product breadcrumb</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
