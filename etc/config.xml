@@ -40,7 +40,6 @@
             <schema>
                 <enable>1</enable>
                 <enable_category_ratings>1</enable_category_ratings>
-                <enable_product_ratings>1</enable_product_ratings>
                 <enable_breadcrumb>1</enable_breadcrumb>
             </schema>
         </richsnippet>
