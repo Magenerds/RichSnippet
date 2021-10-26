@@ -16,11 +16,13 @@ use Magenerds\RichSnippet\Helper\Data;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager as EventManager;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Module\Manager;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
@@ -97,6 +99,8 @@ class SchemaOrg extends Template // NOSONAR
     protected $connection;
     /** @var UrlFinderInterface */
     private $urlFinder;
+    /** @var Manager */
+    private $moduleManager;
 
     /**
      * SchemaOrg constructor.
@@ -109,6 +113,7 @@ class SchemaOrg extends Template // NOSONAR
      * @param EventManager $eventManager
      * @param ResourceConnection $connection
      * @param UrlFinderInterface $urlFinder
+     * @param ?Manager $moduleManager
      * @param array $data
      */
     public function __construct(
@@ -120,7 +125,8 @@ class SchemaOrg extends Template // NOSONAR
         EventManager $eventManager,
         ResourceConnection $connection,
         UrlFinderInterface $urlFinder,
-        $data = []
+        $data = [],
+        Manager $moduleManager = null
     ) {
         $this->coreRegistry = $registry;
         $this->reviewSummaryFactory = $reviewSummaryFactory;
@@ -130,6 +136,7 @@ class SchemaOrg extends Template // NOSONAR
         $this->connection = $connection;
         parent::__construct($context, $data);
         $this->urlFinder = $urlFinder;
+        $this->moduleManager = $moduleManager ?: ObjectManager::getInstance()->get(Manager::class);
     }
 
     /**
@@ -434,16 +441,19 @@ class SchemaOrg extends Template // NOSONAR
         ];
 
         // add ratings
-        if ($this->helper->getSchemaEnableCategoryRatings() && ($rating = $this->getCategoryRating())) {
-            $schema = array_merge($schema, [
-                'aggregateRating' => [
-                    '@type' => 'AggregateRating',
-                    'ratingValue' => $rating[0],
-                    'reviewCount' => $rating[1],
-                    'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
-                    'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
-                ]
-            ]);
+        if ($this->moduleManager->isEnabled('Magento_Review') && $this->helper->getSchemaEnableCategoryRatings()) {
+            $rating = $this->getCategoryRating();
+            if ($rating) {
+                $schema = array_merge($schema, [
+                    'aggregateRating' => [
+                        '@type' => 'AggregateRating',
+                        'ratingValue' => $rating[0],
+                        'reviewCount' => $rating[1],
+                        'worstRating' => static::AGGREGATE_RATING_WORST_RATING,
+                        'bestRating' => static::AGGREGATE_RATING_BEST_RATING,
+                    ]
+                ]);
+            }
         }
 
         // return schema
@@ -532,18 +542,20 @@ class SchemaOrg extends Template // NOSONAR
         $product = [];
         $offers = [];
 
-        $summaryModel = $this->getReviewSummary();
-        $reviewCount = $summaryModel->getReviewsCount();
-        $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
+        if ($this->moduleManager->isEnabled('Magento_Review')) {
+            $summaryModel = $this->getReviewSummary();
+            $reviewCount = $summaryModel->getReviewsCount();
+            $ratingSummary = ($summaryModel->getRatingSummary()) ? $summaryModel->getRatingSummary() : 20;
 
-        if ($reviewCount > 0) {
-            $aggregateRating = $this->getProductSchemaData([], static::AGGREGATE_RATING_BEST_RATING, 'bestRating');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, static::AGGREGATE_RATING_WORST_RATING, 'worstRating');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
-            $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
-            if (!empty($aggregateRating)) {
-                $aggregateRating['@type'] = 'AggregateRating';
-                $product['aggregateRating'] = $aggregateRating;
+            if ($reviewCount > 0) {
+                $aggregateRating = $this->getProductSchemaData([], static::AGGREGATE_RATING_BEST_RATING, 'bestRating');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, static::AGGREGATE_RATING_WORST_RATING, 'worstRating');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, ($ratingSummary / 20), 'ratingValue');
+                $aggregateRating = $this->getProductSchemaData($aggregateRating, $reviewCount, 'reviewCount');
+                if (!empty($aggregateRating)) {
+                    $aggregateRating['@type'] = 'AggregateRating';
+                    $product['aggregateRating'] = $aggregateRating;
+                }
             }
         }
 
