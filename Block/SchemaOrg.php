@@ -113,8 +113,8 @@ class SchemaOrg extends Template // NOSONAR
      * @param EventManager $eventManager
      * @param ResourceConnection $connection
      * @param UrlFinderInterface $urlFinder
-     * @param ?Manager $moduleManager
      * @param array $data
+     * @param ?Manager $moduleManager
      */
     public function __construct(
         Registry $registry,
