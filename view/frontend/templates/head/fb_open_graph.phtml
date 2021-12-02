@@ -32,7 +32,7 @@ $ogData = $block->getOpenGraphData()
 <?php endif; ?>
 
 <?php foreach ($ogData as $key => $value): ?>
-    <?php if (isset($key)): ?>
-        <meta property="og:<?php echo $block->escapeQuote($key); ?>" content="<?php echo $block->escapeQuote($value); ?>">
+    <?php if (isset($key, $value)): ?>
+        <meta property="og:<?php echo $block->escapeQuote((string)$key); ?>" content="<?php echo $block->escapeQuote((string)$value); ?>">
     <?php endif; ?>
 <?php endforeach; ?>
