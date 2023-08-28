@@ -182,9 +182,9 @@ class SchemaOrg extends Template // NOSONAR
     protected function getDescription()
     {
         if ($this->helper->getDescriptionType()) {
-            return nl2br($this->getProduct()->getData('description'));
+            return nl2br($this->getProduct()->getData('description') ?? '');
         } else {
-            return nl2br($this->getProduct()->getData('short_description'));
+            return nl2br($this->getProduct()->getData('short_description') ?? '');
         }
     }
 
